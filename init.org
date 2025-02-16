@@ -305,8 +305,8 @@ My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mon
     
     (set-face-attribute 'default nil :height akselos/font-height)
 
-  (when (member "JetBrains Mono" (font-family-list))
-    (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height)
+;;  (when (member "JetBrains Mono" (font-family-list))
+;;    (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height)
 #+end_src
 
 *** Icons and Emojis
@@ -353,7 +353,6 @@ Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-
   (setq dashboard-projects-backend 'project-el
         dashboard-banner-logo-title nil
         dashboard-center-content t
-        dashboard-set-footer nil
         dashboard-page-separator "\n\n\n"
         dashboard-items '((projects . 15)
                           (recents  . 15)
@@ -451,7 +450,7 @@ I do not like Emacs' undo until you redo behaviour. [[https://github.com/emacsmi
 [[https://github.com/emacsfodder/move-text][move-text]] lets you move lines, or highlighted areas up and down.
 
 #+begin_src emacs-lisp
-(use-package move-text)
+(use-package move-text
   :bind (:map custom-bindings-map
               ("C-M-<down>" . move-text-down)
               ("C-M-<up>" . move-text-up)))
@@ -806,7 +805,7 @@ The following code is taken from Sophie Bosio and Lars Tveito
     (setq org-adapt-indentation t
         org-hide-leading-stars t
         org-pretty-entities t
-        org-startup-folded t
+        org-startup-folded nil
         org-src-fontify-natively t
   	  org-src-tab-acts-natively t
         org-edit-src-content-indentation 0)
@@ -821,7 +820,7 @@ The following code is taken from Sophie Bosio and Lars Tveito
     '(outline-5          ((t (:height 1.1))))
     '(outline-6          ((t (:height 1.1))))
     '(outline-8          ((t (:height 1.1))))
-    '(outline-9          ((t (:height 1.1)))))
+    '(outline-9          ((t (:height 1.1))))))
 #+end_src
 
 ** Org Appear
