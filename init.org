@@ -14,7 +14,7 @@ I have *borrowed* a lot of code from other repositories, the main ones being:
 - [[https://github.com/SophieBosio/.emacs.d/tree/main][Sophie Bosio]]  
 - [[https://panadestein.github.io/emacsd/][Ramón L. Panadés-Barrueta]]
 
-Ive also tried to reference most of the code taken in instances of me finding them in threads.
+I've also tried to reference most of the code taken in instances of me finding them in threads.
 
 ** Installation
 #+begin_src sh tangle: no
@@ -31,19 +31,19 @@ TODO: All the links brutha
 Because we're using =org-babel-tangle=, any changes done in =~/.emacs.d/init.el= will inevitably be overwritten when =init.org= is saved. The following code is taken from Lars Tveito, and it makes our =init.el= file tangle our =init.org= file and replace its contents.
 
 #+begin_src emacs-lisp :tangle no
-;; We need org in order to make use of the tangling functionality
-(require 'org)
-;; Open the org-mode configuration
-(find-file (concat user-emacs-directory "init.org"))
-;; Tangle the file
-(org-babel-tangle)
-;; Load the tangled file
-(load-file (concat user-emacs-directory "init.el"))
-;; Byte-compile it
-(byte-compile-file (concat user-emacs-directory "init.el"))
+  ;; We need org in order to make use of the tangling functionality
+  (require 'org)
+  ;; Open the org-mode configuration
+  (find-file (concat user-emacs-directory "init.org"))
+  ;; Tangle the file
+  (org-babel-tangle)
+  ;; Load the tangled file
+  (load-file (concat user-emacs-directory "init.el"))
+  ;; Byte-compile it
+  (byte-compile-file (concat user-emacs-directory "init.el"))
 #+end_src
 
-Since I'm tracking my files using Git, it would be annoying to have to wipe the =init.el= file every time I clone it, so we do the following to make Git ignore any new changes to =init.el= since its all documented here anyways.
+Since I'm tracking my files using Git, it would be annoying to have to wipe the =init.el= file every time I clone the repo to a new machine, so we do the following to make Git ignore any new changes to =init.el= since its all documented here anyways.
 
 #+begin_src sh :tangle no
 git update-index --assume-unchanged init.el
@@ -54,3 +54,885 @@ In the case of wanting to track =init.el= again, you can do:
 #+begin_src :tangle no
 git update-index --no-assume-unchanged init.el
 #+end_src 
+
+** Lexical Scoping
+I don't really know what lexical binding is, nor what it does. However a lot of my packages seem to require it, so let's start by adding it.
+
+#+begin_src emacs-lisp
+;;; -*- lexical-binding: t -*-
+#+end_src
+
+** Tangling
+Now, this is complete magic to me so here is a fun-fact about the pokémon Tangela. Did you know that Tangela was originally called "Medusa"? Not that interesting? Well, here is the code taken from Lars Tveito about tangling.
+
+We can use =C-c C-v t= to run =org-babel-tangle=, which extracts the code blocks from the current file into a source-specific file (in this case a =.el=-file).
+
+To avoid doing this each time a change is made we can add a function to the =after-save-hook= ensuring to always tangle and byte-compile the =org=-document after changes.
+
+#+begin_src emacs-lisp
+  (defun tangle-init ()
+    "If the current buffer is init.org the code-blocks are
+  tangled, and the tangled file is compiled."
+    (when (equal (buffer-file-name)
+                 (expand-file-name (concat user-emacs-directory "init.org")))
+      ;; Avoid running hooks when tangling.
+      (let ((prog-mode-hook nil))
+        (org-babel-tangle)
+        (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+  (add-hook 'after-save-hook 'tangle-init)
+#+end_src
+
+* Start
+All this code is taken from [[https://github.com/SophieBosio/.emacs.d/tree/main][Sophie Bosio]].
+
+** Early init
+#+begin_src :tangle early-init.el
+;; Defer garbage collection
+(setq gc-cons-percentage 0.6)
+
+;; Change default max size for reading processes
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+(set-language-environment "UTF-8")
+
+;; Set-language-environment sets default-input-method, which is unwanted.
+(setq default-input-method nil)
+
+;; Prefer loading newer compiled files
+(setq load-prefer-newer t)
+
+;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
+(setq default-frame-alist
+      '((vertical-scroll-bars . nil)
+        (menu-bar-lines       . 0)
+        (tool-bar-lines       . 0)))
+
+;; Resizing the Emacs frame can be a terribly expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(setq frame-inhibit-implied-resize t
+      frame-resize-pixelwise       t)
+
+;; Font compacting can be very resource-intensive, especially when rendering
+;; icon fonts on Windows. This will increase memory usage.
+(setq inhibit-compacting-font-caches t)
+
+;; Ignore X resources; its settings would be redundant with the other settings
+;; in this file and can conflict with later config (particularly where the
+;; cursor color is concerned).
+(advice-add #'x-apply-session-resources :override #'ignore)
+
+;; A second, case-insensitive pass over `auto-mode-alist' is time wasted.
+;; No second pass of case-insensitive search over auto-mode-alist.
+(setq auto-mode-case-fold nil)
+
+;; Disable bidirectional text scanning for a modest performance boost.
+(setq-default bidi-display-reordering  'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+
+;; Unset `file-name-handler-alist' too (temporarily). Every file opened and
+;; loaded by Emacs will run through this list to check for a proper handler for
+;; the file, but during startup, it won’t need any of them.
+(defvar file-name-handler-alist-old file-name-handler-alist)
+(setq file-name-handler-alist nil)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq file-name-handler-alist file-name-handler-alist-old)))
+
+;; For LSP mode, use plists for deserialization
+;; For more info, see https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
+(setenv "LSP_USE_PLISTS" "true")
+
+;; Remove "For information about GNU Emacs..." message at startup
+(advice-add #'display-startup-echo-area-message :override #'ignore)
+
+;; Suppress the vanilla startup screen completely. Even if disabled with
+;; `inhibit-startup-screen', it would still initialize anyway.
+(advice-add #'display-startup-screen :override #'ignore)
+
+;; Shave seconds off startup time by starting the scratch buffer in
+;; `fundamental-mode'
+(setq initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
+
+;; Disable startup screens and messages
+(setq inhibit-splash-screen t)
+#+end_src
+
+** Garbage collection
+The garbage collection of emacs can slow down the startup, so a common hack is to temporarily inhibit gc during initialization.
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'after-init-hook
+            (lambda ()
+              (setq gc-cons-threshold (* 1024 1024 20))))
+#+end_src
+
+** Optimizations
+I get some compile warnings, this should hopefully remove them. They're usually safe to ignore as far as I know.
+#+begin_src emacs-lisp
+  (setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
+  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+#+end_src
+
+Taken from Doom Emacs =core.el=
+#+begin_src emacs-lisp
+  (setq which-func-update-delay 1.0)
+#+end_src
+
+** Another header
+I like to explicitly state the defaults.
+
+#+begin_src emacs-lisp
+  (setq user-emacs-directory "~/.emacs.d/")
+  (setq default-directory "~/")
+#+end_src
+
+Set UTF-8 as preferred coding system.
+
+#+begin_src emacs-lisp
+  (set-language-environment    "UTF-8")
+  (setq locale-coding-system   'utf-8)
+  (prefer-coding-system        'utf-8)
+  (set-default-coding-systems  'utf-8)
+  (set-terminal-coding-system  'utf-8)
+  (set-keyboard-coding-system  'utf-8)
+  (set-selection-coding-system 'utf-8)
+#+end_src
+
+** Packages
+I don't really have any loyalties to specific emacs package managers, and use-package is included in base Emacs.
+#+begin_src emacs-lisp
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+#+end_src
+
+As stated earlier I mainly use nix on my systems, but nix on windows is I do *not* want to experience, so the following are the package sources.
+
+#+begin_src emacs_lisp
+(setq package-archives
+      '(("GNU ELPA"     . "https://elpa.gnu.org/packages/")
+        ("MELPA Stable" . "https://stable.melpa.org/packages/")
+        ("MELPA"        . "https://melpa.org/packages/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/"))
+      package-archive-priorities
+      '(("GNU ELPA"     . 15)
+        ("MELPA"        . 10)
+        ("MELPA Stable" . 5)
+        ("nongnu        . 0")))
+#+end_src
+
+* Custom Keybindings
+** Custom Keymap
+Keeping a custom keymap that holds all the custom bindings seemed useful. This map can be activated by using a =minor-mode= that will inhibit other =major-modes= from overriding the binds.
+
+#+begin_src emacs-lisp
+  (defvar custom-bindings-map (make-keymap)
+    "A keymap for custom keybindings.")
+#+end_src
+
+** Mac OS Modifier Keys
+On mac, I rebind my right option as meta, and keep my left option as a mac key.
+
+#+begin_src emacs-lisp
+  (setq mac-option-modifier 'none
+  	  mac-right-option-modifier 'meta)
+#+end_src
+
+** Unbound Default Keys
+I keep accidentally zooming when I'm scrolling through documents, so I unbind them.
+
+#+begin_src emacs-lisp
+(global-unset-key (kbd "C-<wheel-up>"))
+(global-unset-key (kbd "C-<wheel-down>"))
+#+end_src
+
+* Visual
+** Decluttering
+This is added to =early-init.el=.
+
+#+begin_src :tangle early-init.el
+(dolist (mode
+         '(tool-bar-mode                ; No toolbars, more room for text
+           scroll-bar-mode              ; No scroll bars either
+           blink-cursor-mode))          ; The blinking cursor gets old
+  (funcall mode 0))
+#+end_src
+
+I'm currently testing this to see if there really is a difference, this also goes in the =early-init.el=.
+
+#+begin_src :tangle early-init.el
+(add-to-list 'default-frame-alist '(undecorated-round . t))
+(add-to-list 'default-frame-alist '(internal-border-width . 24))
+#+end_src
+
+** Open in fullscreen
+When I open Emacs, I want it to open maximised and fullscreen by default.
+
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist     '(fullscreen . maximized))
+#+end_src
+
+** Styling Delimiters
+I like to have different colors depending on the level, [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] does that.
+
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
+#+end_src
+
+** Theme
+I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the frappe theme as my default.
+
+#+begin_src emacs-lisp
+(use-package catppuccin-theme
+  :ensure t
+  :config
+  (load-theme 'catppuccin :no-confirm)
+  (setq catppuccin-flavor 'frappe) ;; 'latte, 'frappe, 'macchiato, or 'mocha)
+  (catppuccin-reload))
+#+end_src
+
+** Fonts
+*** Default, Fixed, and Variable
+I my current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
+
+#+begin_src emacs-lisp
+  (defvar akselos/font-height 140)
+    
+    (set-face-attribute 'default nil :height akselos/font-height)
+
+  (when (member "JetBrains Mono" (font-family-list))
+    (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height)
+#+end_src
+
+*** Icons and Emojis
+#+begin_src emacs-lisp
+(use-package nerd-icons)
+#+end_src
+
+** Modeline
+I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+#+end_src
+
+** Text Display Modes
+*** Olivetti
+[[https://github.com/rnkn/olivetti/tree/master][Olivetti]] is /"A simple Emacs minor mode for a nice writing environment"/. It centers the text of the buffer.
+
+#+begin_src emacs-lisp
+(use-package olivetti
+  :defer t
+  :bind (:map custom-bindings-map ("C-c o" . olivetti-mode))
+  :config
+  (setq-default olivetti-body-width (+ fill-column 3)))
+#+end_src
+
+*** Adaptive Wrap
+[[https://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]] is used to visually wrap lines.
+
+#+begin_src emacs-lisp
+(use-package adaptive-wrap
+  :defer t
+  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+#+end_src
+
+** Dashboard
+Instead of the startup screen, i use [[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]].
+
+#+begin_src emacs-lisp
+(use-package dashboard
+  :config
+  (setq dashboard-projects-backend 'project-el
+        dashboard-banner-logo-title nil
+        dashboard-center-content t
+        dashboard-set-footer nil
+        dashboard-page-separator "\n\n\n"
+        dashboard-items '((projects . 15)
+                          (recents  . 15)
+                          (bookmarks . 5)))
+  (dashboard-setup-startup-hook))
+#+end_src
+
+* General Editing
+** Built-ins
+This is copied for Lars Tveito's repo, aswell as from the emacs course he had.
+
+#+begin_src emacs-lisp
+(setq auto-revert-interval 1            ; Refresh buffers fast
+      default-input-method "TeX"        ; Use TeX when toggling input method
+      echo-keystrokes 0.1               ; Show keystrokes asap
+      enable-recursive-minibuffers t    ; Allow recursive minibuffers
+      frame-inhibit-implied-resize 1    ; Don't resize frame implicitly
+      inhibit-startup-screen t          ; No splash screen please
+      initial-scratch-message nil       ; Clean scratch buffer
+      recentf-max-saved-items 10000     ; Show more recent files
+      ring-bell-function 'ignore        ; Quiet
+      scroll-margin 1                   ; Space between cursor and top/bottom
+      sentence-end-double-space nil     ; No double space
+      custom-file                       ; Customizations in a separate file
+      (concat user-emacs-directory "custom.el"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (dolist (mode
+           '(abbrev-mode                  ; E.g. sopl -> System.out.println
+             column-number-mode           ; Show column number in mode line
+             delete-selection-mode        ; Replace selected text
+             dirtrack-mode                ; directory tracking in *shell*
+             global-so-long-mode          ; Mitigate performance for long lines
+             recentf-mode                 ; Recently opened files
+  		   savehist-mode                ; Prioritize recently used commands
+             show-paren-mode))            ; Highlight matching parentheses
+    (funcall mode 1))
+#+end_src
+
+  Some variables er buffer-local, so we have to change them using =setq-default=.
+
+#+begin_src emacs-lisp
+  (setq-default tab-width 4                       ; Smaller tabs
+                fill-column 79                    ; Maximum line width
+                truncate-lines t                  ; Don't fold lines
+                indent-tabs-mode nil              ; Use spaces instead of tabs
+                split-width-threshold 160         ; Split verticly by default
+                split-height-threshold nil        ; Split verticly by default
+                frame-resize-pixelwise t          ; Fine-grained frame resize
+                auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
+#+end_src
+
+** Autosave
+To avoid file system clutter we put all auto saved files in a single directory.
+
+#+begin_src emacs-lisp
+(defvar emacs-autosave-directory
+  (concat user-emacs-directory "autosaves/")
+  "This variable dictates where to put auto saves. It is set to a
+  directory called autosaves located wherever your .emacs.d/ is
+  located.")
+
+;; Sets all files to be backed up and auto saved in a single directory.
+(setq backup-directory-alist
+      `((".*" . ,emacs-autosave-directory))
+      auto-save-file-name-transforms
+      `((".*" ,emacs-autosave-directory t)))
+#+end_src
+
+** Move Where I Mean
+[[https://github.com/alezost/mwim.el][Move Where I Mean]] provides several commands to switch between various line positions, like moving to the beginning/end of code, line or comment.
+
+#+begin_src emacs-lisp
+(use-package mwim
+  :ensure t
+  :bind (:map custom-bindings-map
+              ("C-a" . mwim-beginning-of-code-or-line)
+              ("C-e" . mwim-end-of-code-or-line)))
+#+end_src
+
+** Text Editing
+*** Undo/Redo
+I do not like Emacs' undo until you redo behaviour. [[https://github.com/emacsmirror/undo-fu][undo-fu]] gives you binds to only undo, and only redo.
+
+#+begin_src emacs-lisp
+(use-package undo-fu
+  :defer t
+  :bind (:map custom-bindings-map
+              ("C-_" . undo-fu-only-undo)
+              ("M-_" . undo-fu-only-redo)))
+#+end_src
+
+*** Move Lines
+[[https://github.com/emacsfodder/move-text][move-text]] lets you move lines, or highlighted areas up and down.
+
+#+begin_src emacs-lisp
+(use-package move-text)
+  :bind (:map custom-bindings-map
+              ("C-M-<down>" . move-text-down)
+              ("C-M-<up>" . move-text-up)))
+#+end_src
+
+* Buffers and Frames
+** Killing Buffers
+Taken from this [[https://superuser.com/questions/895920/how-can-i-close-all-buffers-in-emacs][StackExchange]] post. It seemed interessting. =C-c k= kills the current buffer, whilst =C-u C-c k= kills all external Emacs buffers.
+
+#+begin_src emacs-lisp
+(defun soph/kill-buffer (&optional arg)
+"When called with a prefix argument -- i.e., C-u -- kill all interesting
+buffers -- i.e., all buffers without a leading space in the buffer-name.
+When called without a prefix argument, kill just the current buffer
+-- i.e., interesting or uninteresting."
+(interactive "P")
+  (cond
+    ((and (consp arg) (equal arg '(4)))
+      (mapc
+        (lambda (x)
+          (let ((name (buffer-name x)))
+            (unless (eq ?\s (aref name 0))
+              (kill-buffer x))))
+        (buffer-list)))
+    (t
+      (kill-buffer (current-buffer)))))
+
+(define-key custom-bindings-map (kbd "C-c k") 'soph/kill-buffer)
+#+end_src
+
+** Kill Buffer and its Associated File
+Ever made a file with the wrong name, and you now have to do stuff? Well fret not! Now you don't have to do as much stuff.
+
+The following code was taken from [[http://whattheemacsd.com/file-defuns.el-02.html][What the .emacs.d!?]] and Sophie Bosio.
+
+#+begin_src emacs-lisp
+(defun magnar/delete-current-buffer-file ()
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (ido-kill-buffer)
+      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+#+end_src
+
+** Rename Buffer and its Associated File
+Ever made a Java file with a mismatching class and file name? Well fret not! The following code renames the buffer an its associated file
+
+The following code was taken from [[http://whattheemacsd.com/file-defuns.el-01.html][What the .emacs.d!?]] and Sophie Bosio.
+
+#+begin_src emacs-lisp
+(defun magnar/rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists!" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+#+end_src
+
+* Completion
+** Vertico
+[[https://github.com/minad/vertico][Vertico]] improves the interface calling commands (i.e. M-x), finding files, switching buffers, searching files and so on.
+
+I also use a function taken from [[http://whattheemacsd.com/setup-ido.el-02.html][this What the .emacs.d!? post]] and Sophie Bosio.
+
+#+begin_src emacs-lisp
+  (defun soph/take-me-home ()
+    (interactive)
+    (if (looking-back "/" nil)
+        (progn (call-interactively 'delete-minibuffer-contents) (insert "~/"))
+      (call-interactively 'self-insert-command)))
+    
+  (use-package vertico
+      :bind (:map vertico-map ("~" . soph/take-me-home))
+      :config
+      (vertico-mode)
+      (setq vertico-count 25))
+#+end_src
+
+** Vertico Posframe
+The following is taken from Sophie Bosio.
+
+[[https://github.com/tumashu/vertico-posframe][vertico-posframe]] makes Vertico appear in a small child frame, instead of as a traditional minibuffer. I like to have mine in the middle of the frame, with small fringes on either side.
+
+I temporarily disable vertico-posframe-mode when searching with consult. When selecting a search match, a preview is provided. That’s kind of hard to see with the posframe in the middle of the screen, so while searching I just use the normal minibuffer.
+
+#+begin_src emacs-lisp
+(use-package vertico-posframe
+  :init
+  (setq vertico-posframe-parameters   '((left-fringe  . 12)    ;; Fringes
+                                        (right-fringe . 12)
+                                        (undecorated  . nil))) ;; Rounded frame
+  :config
+  (vertico-posframe-mode 1)
+  (setq vertico-posframe-width        88                       ;; Narrow frame
+        vertico-posframe-height       vertico-count            ;; Default height
+        ;; Don't create posframe for these commands
+        vertico-multiform-commands    '((consult-line    (:not posframe))
+                                        (consult-ripgrep (:not posframe)))))
+#+end_src
+
+** Orderless
+[[https://github.com/oantolin/orderless][Orderless]] is an Emacs completion style that matches multiple regexps in any order.
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :config
+  (setq completion-styles '(orderless basic partial-completion)
+        completion-category-overrides '((file (styles basic partial-completion)))
+        orderless-component-separator "[ |]"))
+#+end_src
+
+** Corfu
+I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wish to have a VSCode like completion ui, therefore I have enabled =corfu-auto=. Perhaps one day I get proficient with =M-\=.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :init
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.5)
+  (corfu-cycle t))
+#+end_src
+
+** Cape
+I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
+
+#+begin_src emacs-lisp
+(use-package cape
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)  
+  (add-hook 'completion-at-point-functions #'cape-keyword)
+  (message (format "Loading my capf extensions: %s" completion-at-point-functions)))
+#+end_src
+
+* Search
+** Marginalia
+[[https://github.com/minad/marginalia][Marginalia]] gives better descriptions for commands inline.
+
+#+begin_src emacs-lisp
+(use-package marginalia
+  :init 
+  (marginalia-mode 1))
+#+end_src
+
+** Consult
+[[https://github.com/minad/consult][Consult]] provides a ton of search, navigation, and completion functionality.
+
+I often press =C-x C-b= when I only mean to press =C-x b=.
+
+#+begin_src emacs-lisp
+  (use-package consult
+    :bind (:map custom-bindings-map
+                ("C-x b"   . consult-buffer)
+  			  ("C-x C-b" . consult-buffer)
+                ("C-c r"   . consult-ripgrep))
+    :config
+    (setq consult-preview-key (list :debounce 0.1 'any)))
+#+end_src
+
+* Misc. Packages
+** vterm
+The following is taken from Lars Tveito, with some keybind tweaks.
+
+#+begin_src emacs-lisp
+(use-package vterm
+  :defer t
+  :preface
+  (defvar vterms nil)
+
+  (defun toggle-vterm (&optional n)
+    (interactive)
+    (setq vterms (seq-filter 'buffer-live-p vterms))
+    (let ((default-directory (or (vc-root-dir) default-directory)))
+     (cond ((numberp n) (push (vterm n) vterms))
+           ((null vterms) (push (vterm 1) vterms))
+           ((seq-contains-p vterms (current-buffer))
+            (switch-to-buffer (car (seq-difference (buffer-list) vterms))))
+           (t (switch-to-buffer (car (seq-intersection (buffer-list) vterms)))))))
+
+  :bind (:map custom-bindings-map
+              ("C-z" . toggle-vterm)
+              ("s-1" . (lambda () (interactive) (toggle-vterm 1)))
+              ("s-2" . (lambda () (interactive) (toggle-vterm 2)))
+              ("s-3" . (lambda () (interactive) (toggle-vterm 3)))
+              ("s-4" . (lambda () (interactive) (toggle-vterm 4)))
+              ("s-5" . (lambda () (interactive) (toggle-vterm 5)))
+              ("s-6" . (lambda () (interactive) (toggle-vterm 6)))
+              ("s-7" . (lambda () (interactive) (toggle-vterm 7)))
+              ("s-8" . (lambda () (interactive) (toggle-vterm 8)))
+              ("s-9" . (lambda () (interactive) (toggle-vterm 9))))
+
+  :config
+  ;; Don't query about killing vterm buffers, just kill it
+  (defadvice vterm (after kill-with-no-query nil activate)
+    (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil)))
+#+end_src
+
+** Version Controll
+*** Magit
+[[https://github.com/magit/magit][Magit]] is a Git client built for Emacs.
+
+#+begin_src emacs-lisp
+(use-package magit
+  :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :bind (:map custom-bindings-map ("C-c m" . magit-status)))
+#+end_src
+
+*** Highlighting with =diff-hl=
+[[https://github.com/dgutov/diff-hl][diff-hl]] highlights added, deleted and modified code segments by adding a colored bar on the left side of the buffer.
+
+#+begin_src emacs-lisp
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode 1))
+#+end_src
+
+*** Blamer
+I got this from Sophie Bosio, and it seemed interesting.
+
+#+begin_src emacs-lisp
+(use-package blamer
+  :after magit
+  :bind (("C-c g i" . blamer-show-commit-info)
+         ("C-c g b" . blamer-show-posframe-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time                 0.3)
+  (blamer-min-offset                4)
+  (blamer-max-commit-message-length 100)
+  (blamer-datetime-formatter        "[%s]")
+  (blamer-commit-formatter          " ● %s")
+  :custom-face
+  (blamer-face ((t :foreground "#7aa2cf"
+                    :background nil
+                    :height 1
+                    :italic nil))))
+#+end_src
+
+** Better Help Buffers
+[[https://github.com/justbur/emacs-which-key][which-key]] was recently added to Emacs 30, and it is a minor mode for Emacs that displays the key bindings following your currently entered incomplete command.
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :config
+  (which-key-mode))
+#+end_src
+
+** Spelling
+*** Jinx
+[[https://github.com/minad/jinx][Jinx]] is a fast just-in-time spell-checker.
+
+#+begin_src emacs-lisp
+(use-package jinx
+  :hook (emacs-startup . global-jinx-mode)
+  :bind ("C-." . jinx-correct)
+  :config
+  (setq jinx-languages "en_US nb-no"))
+#+end_src
+
+*** Define word
+[[https://github.com/abo-abo/define-word][define-word]] lets you see the definition of a word or a phrase at point.
+
+#+begin_src emacs-lisp
+(use-package define-word
+  :defer t
+  :bind (:map custom-bindings-map ("C-c D" . define-word-at-point)))
+#+end_src
+
+** PDF Tools
+[[https://github.com/vedang/pdf-tools][PDF Tools]] is, among other things, a replacement of DocView for PDF files. The key difference is that pages are not pre-rendered.
+
+The following code is taken from Lars Tveito.
+
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :defer t
+  :mode "\\.pdf\\'"
+  :bind (:map pdf-view-mode-map
+              ("c" . (lambda ()
+                       (interactive)
+                       (if header-line-format
+                           (setq header-line-format nil)
+                         (nano-modeline-pdf-mode))))
+              ("j" . pdf-view-next-line-or-next-page)
+              ("k" . pdf-view-previous-line-or-previous-page))
+  :hook (pdf-view-mode
+         . (lambda ()
+             (nano-modeline-pdf-mode)))
+  :init (pdf-loader-install)
+  :config (add-to-list 'revert-without-query ".pdf"))
+#+end_src
+
+** EditorConfig
+[[https://github.com/editorconfig/editorconfig-emacs][EditorConfig]] helps you maintain a consistent coding style when working with others.
+
+#+begin_src emacs-lisp
+(use-package editorconfig
+  :defer t)
+#+end_src
+
+** Multiple Cursors
+[[https://github.com/magnars/multiple-cursors.el][multiple-cursors]] is a package I use far to little.
+
+The following code is taken from Lars Tveito
+
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :defer t
+  :hook ((multiple-cursors-mode-enabled . (lambda () (corfu-mode -1)))
+         (multiple-cursors-mode-disabled . (lambda () (corfu-mode 1))))
+  :bind (:map custom-bindings-map
+              ("C-c e" . mc/edit-lines)
+              ("C-c a" . mc/mark-all-like-this)
+              ("C-c n" . mc/mark-next-like-this)))
+#+end_src
+
+* Org
+Org mode is extremely nice for note-taking, and I use it every day.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :defer t
+    :hook (org-mode . olivetti-mode)
+    :config
+    (setq org-adapt-indentation t
+        org-hide-leading-stars t
+        org-pretty-entities t
+        org-startup-folded t
+        org-src-fontify-natively t
+  	  org-src-tab-acts-natively t
+        org-edit-src-content-indentation 0)
+    
+    ;; Resize Org headings
+    (custom-set-faces
+    '(org-document-title ((t (:height 1.6))))
+    '(outline-1          ((t (:height 1.25))))
+    '(outline-2          ((t (:height 1.2))))
+    '(outline-3          ((t (:height 1.15))))
+    '(outline-4          ((t (:height 1.1))))
+    '(outline-5          ((t (:height 1.1))))
+    '(outline-6          ((t (:height 1.1))))
+    '(outline-8          ((t (:height 1.1))))
+    '(outline-9          ((t (:height 1.1)))))
+#+end_src
+
+** Org Appear
+[[https://github.com/awth13/org-appear][org-appear]] makes invisible parts of Org elements appear visible.
+
+#+begin_src emacs-lisp
+(use-package org-appear
+  :commands (org-appear-mode)
+  :hook     (org-mode . org-appear-mode)
+  :config 
+  (setq org-hide-emphasis-markers t)  ;; Must be activated for org-appear to work
+  (setq org-appear-autoemphasis   t   ;; Show bold, italics, verbatim, etc.
+        org-appear-autolinks      t   ;; Show links
+        org-appear-autosubmarkers t)) ;; Show sub- and superscripts
+#+end_src
+
+** Org Modern
+[[https://github.com/minad/org-modern][Org Modern]] implements a modern style for your Org buffers.
+
+#+begin_src emacs-lisp
+(use-package org-modern
+  :after org
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-block-fringe nil
+        org-modern-star 'replace))
+#+end_src
+
+** LaTeX Fragtog
+[[https://github.com/io12/org-fragtog][org-fragtog]] works like org-appear, but for LaTeX fragments.
+
+#+begin_src emacs-lisp
+(use-package org-fragtog
+  :after org
+  :hook (org-mode . org-fragtog-mode))
+#+end_src
+
+** LaTeX export
+[[https://github.com/tecosaur/engrave-faces][engrave-faces]] syntax highlights source blocks after your color theme.
+
+#+begin_src emacs-lisp
+(use-package engrave-faces
+  :defer t)
+#+end_src
+
+This is WIP as ox-latex isn't in Nix.
+
+#+begin_src emacs-lisp
+(use-package ox-latex
+  :ensure nil
+  :after org
+  :config
+  (setq org-export-allow-bind-keywords t
+        org-latex-src-block-backend 'engraved
+        org-latex-pdf-process
+        '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs)))
+#+end_src
+
+* Programming
+** Direnv
+I use Nix with direnv, [[https://github.com/purcell/envrc][envrc]] uses the direnv tool to determine per-directory/project environment variables and then set those environment variables on a per-buffer basis.
+
+#+begin_src emacs-lisp
+(use-package envrc
+  :if (executable-find "direnv")
+  :init
+  (setq envrc-debug t)
+  (add-hook 'after-init-hook (lambda () (envrc-global-mode 1)))
+  (advice-add 'cider-jack-in :around #'envrc-propagate-environment))
+#+end_src
+
+** Evil Nerd Commenter
+[[https://github.com/redguardtoo/evil-nerd-commenter][Evil Nerd Commenter]] automatically detects most programming languages, and applies the appropriate commenting.
+
+#+begin_src emacs-lisp
+(use-package evil-nerd-commenter
+  :defer t
+  :bind (:map custom-bindings-map ("C-ø" . evilnc-comment-or-uncomment-lines)))
+#+end_src
+
+** Eglot
+I use Eglot as my lsp, mainly because it is built-in.
+
+The following code is from Lars Tveito, mainly because I haven't had the time to look properly into all the settings myself.
+
+#+begin_src emacs-lisp
+(use-package eglot
+  :defer t
+  :hook (eglot-managed-mode . (lambda ()
+                                (eglot-inlay-hints-mode -1)
+                                (add-hook 'before-save-hook 'eglot-format nil t)))
+  :config
+  (setq eglot-events-buffer-size 0)
+  (add-to-list 'eglot-server-programs
+               '(web-mode . ("svelteserver" "--stdio"))))
+#+end_src
+
+** Python
+#+begin_src emacs-lisp
+(setq python-shell-interpreter "python3.12")
+(add-hook 'python-mode-hook
+          (lambda () (setq forward-sexp-function nil)))
+#+end_src
+
+** Java
+#+begin_src emacs-lisp
+  (define-abbrev-table 'java-mode-abbrev-table
+    '(("psv" "public static void main(String[] args) {" nil 0)
+      ("sopl" "System.out.println" nil 0)
+      ("sop" "System.out.printf" nil 0)))
+#+end_src
+
+To use the abbrev table, =abbrev-mode= must be activated.
+
+#+begin_src emacs-lisp
+(add-hook 'java-mode-hook 'eglot-ensure)
+#+end_src
+
+* Activating Custom Keybindings
