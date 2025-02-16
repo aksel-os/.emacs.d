@@ -31,16 +31,16 @@ TODO: All the links brutha
 Because we're using =org-babel-tangle=, any changes done in =~/.emacs.d/init.el= will inevitably be overwritten when =init.org= is saved. The following code is taken from Lars Tveito, and it makes our =init.el= file tangle our =init.org= file and replace its contents.
 
 #+begin_src emacs-lisp :tangle no
-  ;; We need org in order to make use of the tangling functionality
-  (require 'org)
-  ;; Open the org-mode configuration
-  (find-file (concat user-emacs-directory "init.org"))
-  ;; Tangle the file
-  (org-babel-tangle)
-  ;; Load the tangled file
-  (load-file (concat user-emacs-directory "init.el"))
-  ;; Byte-compile it
-  (byte-compile-file (concat user-emacs-directory "init.el"))
+;; We need org in order to make use of the tangling functionality
+(require 'org)
+;; Open the org-mode configuration
+(find-file (concat user-emacs-directory "init.org"))
+;; Tangle the file
+(org-babel-tangle)
+;; Load the tangled file
+(load-file (concat user-emacs-directory "init.el"))
+;; Byte-compile it
+(byte-compile-file (concat user-emacs-directory "init.el"))
 #+end_src
 
 Since I'm tracking my files using Git, it would be annoying to have to wipe the =init.el= file every time I clone the repo to a new machine, so we do the following to make Git ignore any new changes to =init.el= since its all documented here anyways.
@@ -70,17 +70,17 @@ We can use =C-c C-v t= to run =org-babel-tangle=, which extracts the code blocks
 To avoid doing this each time a change is made we can add a function to the =after-save-hook= ensuring to always tangle and byte-compile the =org=-document after changes.
 
 #+begin_src emacs-lisp
-  (defun tangle-init ()
-    "If the current buffer is init.org the code-blocks are
-  tangled, and the tangled file is compiled."
-    (when (equal (buffer-file-name)
-                 (expand-file-name (concat user-emacs-directory "init.org")))
-      ;; Avoid running hooks when tangling.
-      (let ((prog-mode-hook nil))
-        (org-babel-tangle)
-        (byte-compile-file (concat user-emacs-directory "init.el")))))
+(defun tangle-init ()
+  "If the current buffer is init.org the code-blocks are
+tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
 
-  (add-hook 'after-save-hook 'tangle-init)
+(add-hook 'after-save-hook 'tangle-init)
 #+end_src
 
 * Start
@@ -165,49 +165,49 @@ All this code is taken from Sophie Bosio.
 The garbage collection of emacs can slow down the startup, so a common hack is to temporarily inhibit gc during initialization.
 
 #+begin_src emacs-lisp
-  (setq gc-cons-threshold most-positive-fixnum)
-  (add-hook 'after-init-hook
-            (lambda ()
-              (setq gc-cons-threshold (* 1024 1024 20))))
+(setq gc-cons-threshold most-positive-fixnum)
+(add-hook 'after-init-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 1024 1024 20))))
 #+end_src
 
 ** Optimizations
 I get some compile warnings, this should hopefully remove them. They're usually safe to ignore as far as I know.
 #+begin_src emacs-lisp
-  (setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
-  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+(setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
+(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 #+end_src
 
 Taken from Doom Emacs =core.el=
 #+begin_src emacs-lisp
-  (setq which-func-update-delay 1.0)
+(setq which-func-update-delay 1.0)
 #+end_src
 
 ** Another header
 I like to explicitly state the defaults.
 
 #+begin_src emacs-lisp
-  (setq user-emacs-directory "~/.emacs.d/")
-  (setq default-directory "~/")
+(setq user-emacs-directory "~/.emacs.d/")
+(setq default-directory "~/")
 #+end_src
 
 Set UTF-8 as preferred coding system.
 
 #+begin_src emacs-lisp
-  (set-language-environment    "UTF-8")
-  (setq locale-coding-system   'utf-8)
-  (prefer-coding-system        'utf-8)
-  (set-default-coding-systems  'utf-8)
-  (set-terminal-coding-system  'utf-8)
-  (set-keyboard-coding-system  'utf-8)
-  (set-selection-coding-system 'utf-8)
+(set-language-environment    "UTF-8")
+(setq locale-coding-system   'utf-8)
+(prefer-coding-system        'utf-8)
+(set-default-coding-systems  'utf-8)
+(set-terminal-coding-system  'utf-8)
+(set-keyboard-coding-system  'utf-8)
+(set-selection-coding-system 'utf-8)
 #+end_src
 
 ** Packages
 I don't really have any loyalties to specific emacs package managers, and use-package is included in base Emacs.
 #+begin_src emacs-lisp
-  (require 'use-package)
-  (setq use-package-always-ensure t)
+(require 'use-package)
+(setq use-package-always-ensure t)
 #+end_src
 
 As stated earlier I mainly use nix on my systems, but nix on windows is something I do *not* want to experience, so the following are the package sources.
@@ -230,16 +230,16 @@ As stated earlier I mainly use nix on my systems, but nix on windows is somethin
 Keeping a custom keymap that holds all the custom bindings seemed useful. This map can be activated by using a =minor-mode= that will inhibit other =major-modes= from overriding the binds.
 
 #+begin_src emacs-lisp
-  (defvar custom-bindings-map (make-keymap)
-    "A keymap for custom keybindings.")
+(defvar custom-bindings-map (make-keymap)
+  "A keymap for custom keybindings.")
 #+end_src
 
 ** Mac OS Modifier Keys
 On mac, I rebind my right option as meta, and keep my left option as a mac key.
 
 #+begin_src emacs-lisp
-  (setq mac-option-modifier 'none
-  	  mac-right-option-modifier 'meta)
+(setq mac-option-modifier 'none
+	  mac-right-option-modifier 'meta)
 #+end_src
 
 ** Unbound Default Keys
@@ -301,15 +301,15 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
 My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
 
 #+begin_src emacs-lisp
-  (defvar akselos/font-height 115)
+(defvar akselos/font-height 115)
 
-  (when (eq system-type 'darwin)
-    (setq akselos/font-height 140))
-      
-      (set-face-attribute 'default nil :height akselos/font-height)
+(when (eq system-type 'darwin)
+  (setq akselos/font-height 140))
+    
+    (set-face-attribute 'default nil :height akselos/font-height)
 
-  ;;  (when (member "JetBrains Mono" (font-family-list))
-  ;;    (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height)
+;;  (when (member "JetBrains Mono" (font-family-list))
+;;    (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height)
 #+end_src
 
 *** Icons and Emojis
@@ -365,7 +365,7 @@ Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-
 
 * General Editing
 ** Built-ins
-This is copied for Lars Tveito's repo, aswell as from the emacs course he had.
+This is copied for Lars Tveito's repo, as well as from the emacs course he had.
 
 #+begin_src emacs-lisp
 (setq auto-revert-interval 1            ; Refresh buffers fast
@@ -384,29 +384,29 @@ This is copied for Lars Tveito's repo, aswell as from the emacs course he had.
 #+end_src
 
 #+begin_src emacs-lisp
-  (dolist (mode
-           '(abbrev-mode                  ; E.g. sopl -> System.out.println
-             column-number-mode           ; Show column number in mode line
-             delete-selection-mode        ; Replace selected text
-             dirtrack-mode                ; directory tracking in *shell*
-             global-so-long-mode          ; Mitigate performance for long lines
-             recentf-mode                 ; Recently opened files
-  		   savehist-mode                ; Prioritize recently used commands
-             show-paren-mode))            ; Highlight matching parentheses
-    (funcall mode 1))
+(dolist (mode
+         '(abbrev-mode                  ; E.g. sopl -> System.out.println
+           column-number-mode           ; Show column number in mode line
+           delete-selection-mode        ; Replace selected text
+           dirtrack-mode                ; directory tracking in *shell*
+           global-so-long-mode          ; Mitigate performance for long lines
+           recentf-mode                 ; Recently opened files
+           savehist-mode                ; Prioritize recently used commands
+           show-paren-mode))            ; Highlight matching parentheses
+  (funcall mode 1))
 #+end_src
 
-  Some variables are buffer-local, so we have to change them using =setq-default=.
+Some variables are buffer-local, so we have to change them using =setq-default=.
 
 #+begin_src emacs-lisp
-  (setq-default tab-width 4                       ; Smaller tabs
-                fill-column 79                    ; Maximum line width
-                truncate-lines t                  ; Don't fold lines
-                indent-tabs-mode nil              ; Use spaces instead of tabs
-                split-width-threshold 160         ; Split verticly by default
-                split-height-threshold nil        ; Split verticly by default
-                frame-resize-pixelwise t          ; Fine-grained frame resize
-                auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
+(setq-default tab-width 4                       ; Smaller tabs
+              fill-column 79                    ; Maximum line width
+               truncate-lines t                  ; Don't fold lines
+               indent-tabs-mode nil              ; Use spaces instead of tabs
+               split-width-threshold 160         ; Split verticly by default
+               split-height-threshold nil        ; Split verticly by default
+               frame-resize-pixelwise t          ; Fine-grained frame resize
+               auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere
 #+end_src
 
 ** Autosave
@@ -535,17 +535,17 @@ The following code was taken from [[http://whattheemacsd.com/file-defuns.el-01.h
 I also use a function taken from [[http://whattheemacsd.com/setup-ido.el-02.html][this What the .emacs.d!? post]] and Sophie Bosio.
 
 #+begin_src emacs-lisp
-  (defun soph/take-me-home ()
-    (interactive)
-    (if (looking-back "/" nil)
-        (progn (call-interactively 'delete-minibuffer-contents) (insert "~/"))
-      (call-interactively 'self-insert-command)))
-    
-  (use-package vertico
-      :bind (:map vertico-map ("~" . soph/take-me-home))
-      :config
-      (vertico-mode)
-      (setq vertico-count 25))
+(defun soph/take-me-home ()
+  (interactive)
+  (if (looking-back "/" nil)
+      (progn (call-interactively 'delete-minibuffer-contents) (insert "~/"))
+    (call-interactively 'self-insert-command)))
+
+(use-package vertico
+  :bind (:map vertico-map ("~" . soph/take-me-home))
+  :config
+  (vertico-mode)
+  (setq vertico-count 25))
 #+end_src
 
 ** Vertico Posframe
@@ -624,13 +624,13 @@ I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
 I often press =C-x C-b= when I only mean to press =C-x b=.
 
 #+begin_src emacs-lisp
-  (use-package consult
-    :bind (:map custom-bindings-map
-                ("C-x b"   . consult-buffer)
-                ("C-x C-b" . consult-buffer)
-                ("C-c r"   . consult-ripgrep))
-    :config
-    (setq consult-preview-key (list :debounce 0.1 'any)))
+(use-package consult
+  :bind (:map custom-bindings-map
+              ("C-x b"   . consult-buffer)
+              ("C-x C-b" . consult-buffer)
+              ("C-c r"   . consult-ripgrep))
+  :config
+  (setq consult-preview-key (list :debounce 0.1 'any)))
 #+end_src
 
 * Misc. Packages
@@ -669,8 +669,11 @@ The following is taken from Lars Tveito, with some keybind tweaks.
 
   :config
   ;; Don't query about killing vterm buffers, just kill it
-  (defadvice vterm (after kill-with-no-query nil activate)
-    (set-process-query-on-exit-flag (get-buffer-process ad-return-value) nil)))
+  (defun my-vterm-kill-with-no-query (&rest _)
+    "Set process query on exit flag to nil for vterm buffer."
+    (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil))
+
+  (advice-add 'vterm :after #'my-vterm-kill-with-no-query))
 #+end_src
 
 ** Version Controll
@@ -801,29 +804,29 @@ The following code is taken from Lars Tveito
 The following code is taken from Sophie Bosio and Lars Tveito
 
 #+begin_src emacs-lisp
-  (use-package org
-    :defer t
-    :hook (org-mode . olivetti-mode)
-    :config
-    (setq org-adapt-indentation t
-        org-hide-leading-stars t
-        org-pretty-entities t
-        org-startup-folded 'showeverything
-        org-src-fontify-natively t
-  	  org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0)
-    
-    ;; Resize Org headings
-    (custom-set-faces
-    '(org-document-title ((t (:height 1.6))))
-    '(outline-1          ((t (:height 1.25))))
-    '(outline-2          ((t (:height 1.2))))
-    '(outline-3          ((t (:height 1.15))))
-    '(outline-4          ((t (:height 1.1))))
-    '(outline-5          ((t (:height 1.1))))
-    '(outline-6          ((t (:height 1.1))))
-    '(outline-8          ((t (:height 1.1))))
-    '(outline-9          ((t (:height 1.1))))))
+(use-package org
+  :defer t
+  :hook (org-mode . olivetti-mode)
+  :config
+  (setq org-adapt-indentation t
+      org-hide-leading-stars t
+      org-pretty-entities t
+      org-startup-folded 'showeverything
+      org-src-fontify-natively t
+	  org-src-tab-acts-natively t
+      org-edit-src-content-indentation 0)
+  
+  ;; Resize Org headings
+  (custom-set-faces
+  '(org-document-title ((t (:height 1.6))))
+  '(outline-1          ((t (:height 1.25))))
+  '(outline-2          ((t (:height 1.2))))
+  '(outline-3          ((t (:height 1.15))))
+  '(outline-4          ((t (:height 1.1))))
+  '(outline-5          ((t (:height 1.1))))
+  '(outline-6          ((t (:height 1.1))))
+  '(outline-8          ((t (:height 1.1))))
+  '(outline-9          ((t (:height 1.1))))))
 #+end_src
 
 ** Org Appear
@@ -918,7 +921,7 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
                                 (eglot-inlay-hints-mode -1)
                                 (add-hook 'before-save-hook 'eglot-format nil t)))
   :config
-  (setq eglot-events-buffer-size 0)
+;;0  (setq eglot-events-buffer-size 0)
   (add-to-list 'eglot-server-programs
                '(web-mode . ("svelteserver" "--stdio"))))
 #+end_src
@@ -934,10 +937,10 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
 Abbreviations for the most tedious Java stuffs
 
 #+begin_src emacs-lisp
-  (define-abbrev-table 'java-mode-abbrev-table
-    '(("psv" "public static void main(String[] args) {" nil 0)
-      ("sopl" "System.out.println" nil 0)
-      ("sop" "System.out.printf" nil 0)))
+(define-abbrev-table 'java-mode-abbrev-table
+  '(("psv" "public static void main(String[] args) {" nil 0)
+    ("sopl" "System.out.println" nil 0)
+    ("sop" "System.out.printf" nil 0)))
 #+end_src
 
 To use the abbrev table, =abbrev-mode= must be activated.
