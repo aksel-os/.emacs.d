@@ -210,7 +210,7 @@ I don't really have any loyalties to specific emacs package managers, and use-pa
   (setq use-package-always-ensure t)
 #+end_src
 
-As stated earlier I mainly use nix on my systems, but nix on windows is I do *not* want to experience, so the following are the package sources.
+As stated earlier I mainly use nix on my systems, but nix on windows is something I do *not* want to experience, so the following are the package sources.
 
 #+begin_src emacs-lisp
 (setq package-archives
@@ -222,7 +222,7 @@ As stated earlier I mainly use nix on my systems, but nix on windows is I do *no
       '(("GNU ELPA"     . 15)
         ("MELPA"        . 10)
         ("MELPA Stable" . 5)
-        ("nongnu        . 0")))
+        ("nongnu"       . 0)))
 #+end_src
 
 * Custom Keybindings
@@ -298,7 +298,7 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
 
 ** Fonts
 *** Default, Fixed, and Variable
-I my current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
+My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
 
 #+begin_src emacs-lisp
   (defvar akselos/font-height 140)
@@ -325,7 +325,7 @@ I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
 
 ** Text Display Modes
 *** Olivetti
-[[https://github.com/rnkn/olivetti/tree/master][Olivetti]] is /"A simple Emacs minor mode for a nice writing environment"/. It centers the text of the buffer.
+[[https://github.com/rnkn/olivetti/tree/master][Olivetti]] is a simple Emacs minor mode for a nice writing environment. It centers the text of the buffer.
 
 #+begin_src emacs-lisp
 (use-package olivetti
@@ -345,7 +345,7 @@ I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
 #+end_src
 
 ** Dashboard
-Instead of the startup screen, i use [[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]].
+Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]].
 
 #+begin_src emacs-lisp
 (use-package dashboard
@@ -394,7 +394,7 @@ This is copied for Lars Tveito's repo, aswell as from the emacs course he had.
     (funcall mode 1))
 #+end_src
 
-  Some variables er buffer-local, so we have to change them using =setq-default=.
+  Some variables are buffer-local, so we have to change them using =setq-default=.
 
 #+begin_src emacs-lisp
   (setq-default tab-width 4                       ; Smaller tabs
@@ -459,7 +459,7 @@ I do not like Emacs' undo until you redo behaviour. [[https://github.com/emacsmi
 
 * Buffers and Frames
 ** Killing Buffers
-Taken from this [[https://superuser.com/questions/895920/how-can-i-close-all-buffers-in-emacs][StackExchange]] post. It seemed interessting. =C-c k= kills the current buffer, whilst =C-u C-c k= kills all external Emacs buffers.
+Taken from this [[https://superuser.com/questions/895920/how-can-i-close-all-buffers-in-emacs][StackExchange]] post and Sophie Bosio. It seemed interessting. =C-c k= kills the current buffer, whilst =C-u C-c k= kills all external Emacs buffers.
 
 #+begin_src emacs-lisp
 (defun soph/kill-buffer (&optional arg)
@@ -580,7 +580,7 @@ I temporarily disable vertico-posframe-mode when searching with consult. When se
 #+end_src
 
 ** Corfu
-I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wish to have a VSCode like completion ui, therefore I have enabled =corfu-auto=. Perhaps one day I get proficient with =M-\=.
+I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wish to have a VSCode like completion ui, therefore I have enabled =corfu-auto=. Perhaps one day I'll get proficient with =M-\=.
 
 #+begin_src emacs-lisp
 (use-package corfu
@@ -625,7 +625,7 @@ I often press =C-x C-b= when I only mean to press =C-x b=.
   (use-package consult
     :bind (:map custom-bindings-map
                 ("C-x b"   . consult-buffer)
-  			  ("C-x C-b" . consult-buffer)
+                ("C-x C-b" . consult-buffer)
                 ("C-c r"   . consult-ripgrep))
     :config
     (setq consult-preview-key (list :debounce 0.1 'any)))
@@ -633,6 +633,8 @@ I often press =C-x C-b= when I only mean to press =C-x b=.
 
 * Misc. Packages
 ** vterm
+[[https://github.com/akermu/emacs-libvterm][vterm]] is a fully-fledged terminal emulator inside GNU Emacs based on libvterm
+
 The following is taken from Lars Tveito, with some keybind tweaks.
 
 #+begin_src emacs-lisp
@@ -690,6 +692,8 @@ The following is taken from Lars Tveito, with some keybind tweaks.
 #+end_src
 
 *** Blamer
+[[https://github.com/Artawower/blamer.el][Blamer]] is a git blame pluggin inspired by GitLens
+
 I got this from Sophie Bosio, and it seemed interesting.
 
 #+begin_src emacs-lisp
@@ -790,7 +794,9 @@ The following code is taken from Lars Tveito
 #+end_src
 
 * Org
-Org mode is extremely nice for note-taking, and I use it every day.
+[[https://orgmode.org/][Org mode]] is extremely nice for note-taking, and I use it nearly every day.
+
+The following code is taken from Sophie Bosio and Lars Tveito
 
 #+begin_src emacs-lisp
   (use-package org
@@ -854,7 +860,7 @@ Org mode is extremely nice for note-taking, and I use it every day.
 #+end_src
 
 ** LaTeX export
-[[https://github.com/tecosaur/engrave-faces][engrave-faces]] syntax highlights source blocks after your color theme.
+[[https://github.com/tecosaur/engrave-faces][engrave-faces]] syntax highlights source blocks based on your color theme.
 
 #+begin_src emacs-lisp
 (use-package engrave-faces
