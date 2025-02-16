@@ -808,7 +808,7 @@ The following code is taken from Sophie Bosio and Lars Tveito
     (setq org-adapt-indentation t
         org-hide-leading-stars t
         org-pretty-entities t
-        org-startup-folded nil
+        org-startup-folded 'showeverything
         org-src-fontify-natively t
   	  org-src-tab-acts-natively t
         org-edit-src-content-indentation 0)
