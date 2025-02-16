@@ -922,6 +922,8 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
 #+end_src
 
 ** Java
+Abbreviations for the most tedious Java stuffs
+
 #+begin_src emacs-lisp
   (define-abbrev-table 'java-mode-abbrev-table
     '(("psv" "public static void main(String[] args) {" nil 0)
@@ -935,4 +937,28 @@ To use the abbrev table, =abbrev-mode= must be activated.
 (add-hook 'java-mode-hook 'eglot-ensure)
 #+end_src
 
+** Nix
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :mode ("\\.nix\\'" "\\.nix.in\\'"))
+(use-package nix-drv-mode
+  :ensure nix-mode
+  :mode "\\.drv\\'")
+(use-package nix-shell
+  :ensure nix-mode
+  :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+(use-package nix-repl
+  :ensure nix-mode
+  :commands (nix-repl))
+#+end_src
+
 * Activating Custom Keybindings
+** Activating the Keymap
+Finally, we activate the custom keymap.
+
+#+begin_src emacs-lisp
+(define-minor-mode custom-bindings-mode
+  "A mode that activates custom keybindings."
+  :init-value t
+  :keymap custom-bindings-map)
+#+end_src
