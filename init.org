@@ -51,7 +51,7 @@ git update-index --assume-unchanged init.el
 
 In the case of wanting to track =init.el= again, you can do:
 
-#+begin_src :tangle no
+#+begin_src sh :tangle no
 git update-index --no-assume-unchanged init.el
 #+end_src 
 
