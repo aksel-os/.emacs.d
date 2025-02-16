@@ -1,0 +1,56 @@
+#+title: Muh Emacs Config
+#+author: Aksel Olav Steen
+:properties:
+#+property: header-args :tangle yes
+#+options: toc:2 num:nil
+#+startup: content
+:end:
+
+* About
+This is my attempt at a [[https://leanpub.com/lit-config/read][literate configuration]] to give me a better way of documenting my config choices for the future. 
+
+I have *borrowed* a lot of code from other repositories, the main ones being:
+- [[https://github.com/larstvei/dot-emacs/tree/main][Lars Tveito]]
+- [[https://github.com/SophieBosio/.emacs.d/tree/main][Sophie Bosio]]  
+- [[https://panadestein.github.io/emacsd/][Ramón L. Panadés-Barrueta]]
+
+Ive also tried to reference most of the code taken in instances of me finding them in threads.
+
+** Installation
+#+begin_src sh tangle: no
+git clone https://github.com/aksel-os/.emacs.d
+#+end_src
+
+I mainly run this with my nix dotfiles, you can view those [[https://github.com/aksel-os/.dotfiles][here]]
+
+* Table of Contents
+
+TODO: All the links brutha
+
+* Setup
+Because we're using =org-babel-tangle=, any changes done in =~/.emacs.d/init.el= will inevitably be overwritten when =init.org= is saved. The following code is taken from Lars Tveito, and it makes our =init.el= file tangle our =init.org= file and replace its contents.
+
+#+begin_src emacs-lisp :tangle no
+;; We need org in order to make use of the tangling functionality
+(require 'org)
+;; Open the org-mode configuration
+(find-file (concat user-emacs-directory "init.org"))
+;; Tangle the file
+(org-babel-tangle)
+;; Load the tangled file
+(load-file (concat user-emacs-directory "init.el"))
+;; Byte-compile it
+(byte-compile-file (concat user-emacs-directory "init.el"))
+#+end_src
+
+Since I'm tracking my files using Git, it would be annoying to have to wipe the =init.el= file every time I clone it, so we do the following to make Git ignore any new changes to =init.el= since its all documented here anyways.
+
+#+begin_src sh :tangle no
+git update-index --assume-unchanged init.el
+#+end_src
+
+In the case of wanting to track =init.el= again, you can do:
+
+#+begin_src :tangle no
+git update-index --no-assume-unchanged init.el
+#+end_src 
