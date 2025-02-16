@@ -84,10 +84,11 @@ To avoid doing this each time a change is made we can add a function to the =aft
 #+end_src
 
 * Start
-All this code is taken from [[https://github.com/SophieBosio/.emacs.d/tree/main][Sophie Bosio]].
 
 ** Early init
-#+begin_src :tangle early-init.el
+All this code is taken from Sophie Bosio.
+
+#+begin_src emacs-lisp :tangle early-init.el
 ;; Defer garbage collection
 (setq gc-cons-percentage 0.6)
 
@@ -211,7 +212,7 @@ I don't really have any loyalties to specific emacs package managers, and use-pa
 
 As stated earlier I mainly use nix on my systems, but nix on windows is I do *not* want to experience, so the following are the package sources.
 
-#+begin_src emacs_lisp
+#+begin_src emacs-lisp
 (setq package-archives
       '(("GNU ELPA"     . "https://elpa.gnu.org/packages/")
         ("MELPA Stable" . "https://stable.melpa.org/packages/")
@@ -253,7 +254,7 @@ I keep accidentally zooming when I'm scrolling through documents, so I unbind th
 ** Decluttering
 This is added to =early-init.el=.
 
-#+begin_src :tangle early-init.el
+#+begin_src emacs-lisp :tangle early-init.el
 (dolist (mode
          '(tool-bar-mode                ; No toolbars, more room for text
            scroll-bar-mode              ; No scroll bars either
@@ -263,7 +264,7 @@ This is added to =early-init.el=.
 
 I'm currently testing this to see if there really is a difference, this also goes in the =early-init.el=.
 
-#+begin_src :tangle early-init.el
+#+begin_src emacs-lisp :tangle early-init.el
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 (add-to-list 'default-frame-alist '(internal-border-width . 24))
 #+end_src
