@@ -309,8 +309,8 @@ My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mon
       
     (set-face-attribute 'default nil :height akselos/font-height)
 
-(when (member "JetBrains Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "JetBrains Mono" :height akselos/font-height))
+(when (member "JetBrainsMono Nerd Font Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font Mono" :height akselos/font-height))
 #+end_src
 
 *** Icons and Emojis
@@ -719,6 +719,23 @@ I got this from Sophie Bosio, and it seemed interesting.
                     :background nil
                     :height 1
                     :italic nil))))
+#+end_src
+
+** Snippets
+[[https://github.com/joaotavora/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation
+and automatically expand it into function templates. I use this over abbrevs.
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :defer 5
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+  (yas-global-mode 1)) ;; or M-x yas-reload-all if you've started YASnippet already.
+
+;; Silences the warning when running a snippet with backticks (runs a command in the snippet)
+(require 'warnings)
+(add-to-list 'warning-suppress-types '(yasnippet backquote-change)) 
 #+end_src
 
 ** Better Help Buffers

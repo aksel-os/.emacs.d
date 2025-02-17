@@ -2,4 +2,6 @@
 !/init.el
 !/init.org
 !/README.org
+!/snippets/
 !/.gitignore
+!/.gitattributes
