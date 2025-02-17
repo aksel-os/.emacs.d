@@ -949,19 +949,21 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
 #+end_src
 
 ** Java
+NOTE: Outdated as I've added YASnippets
+
 Abbreviations for the most tedious Java stuffs
 
 #+begin_src emacs-lisp
-(define-abbrev-table 'java-mode-abbrev-table
-  '(("psv" "public static void main(String[] args) {" nil 0)
-    ("sopl" "System.out.println" nil 0)
-    ("sop" "System.out.printf" nil 0)))
+;; (define-abbrev-table 'java-mode-abbrev-table
+;;   '(("psv" "public static void main(String[] args) {" nil 0)
+;;     ("sopl" "System.out.println" nil 0)
+;;     ("sop" "System.out.printf" nil 0)))
 #+end_src
 
 To use the abbrev table, =abbrev-mode= must be activated.
 
 #+begin_src emacs-lisp
-(add-hook 'java-mode-hook 'eglot-ensure)
+;; (add-hook 'java-mode-hook 'eglot-ensure)
 #+end_src
 
 ** Nix
