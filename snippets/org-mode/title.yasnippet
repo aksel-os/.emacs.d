@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: title
+# key: <t
+# --
+
+#+title: ${1:title}
+#+author: Aksel Olav Steen
+#+date: `(format-time-string "%b %d %Y")`
+:PROPERTIES:
+#+options: toc:nil num:nil
+#+latex_header: \setlength{\parindent}{0pt}
+#+latex_header: \usepackage[margin=3cm]{geometry}
+:END:
+
+$0
