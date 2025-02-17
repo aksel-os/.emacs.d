@@ -766,10 +766,7 @@ The following code is taken from Lars Tveito.
                            (setq header-line-format nil)
                          (nano-modeline-pdf-mode))))
               ("j" . pdf-view-next-line-or-next-page)
-              ("k" . pdf-view-previous-line-or-previous-page))
-  :hook (pdf-view-mode
-         . (lambda ()
-             (nano-modeline-pdf-mode)))
+              ("k" . pdf-view-previous-line-or-previous-page))  
   :init (pdf-loader-install)
   :config (add-to-list 'revert-without-query ".pdf"))
 #+end_src
