@@ -732,8 +732,8 @@ The following is taken from Lars Tveito, with some keybind tweaks.
 
 #+begin_src emacs-lisp
 (use-package magit
-  :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
-         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :hook ((magit-pre-refresh . ignore)    ;; diff-hl-magit-pre-refresh is obsolete
+         (magit-post-refresh . ignore))  ;; diff-hl-magit-post-refresh is obsolete
   :bind (:map custom-bindings-map ("C-c m" . magit-status)))
 #+end_src
 
@@ -1001,17 +1001,7 @@ This is WIP as ox-latex isn't in Nix.
     languages, commands, saved searches and agenda-like views, etc.
     #+begin_src emacs-lisp
     (use-package org-ql
-      :after org
-      :config
-      (add-to-list 'org-ql-views
-                   '("Questions" :buffers-files org-agenda-files :query
-                     (and
-                      (not
-                       (done))
-                      (todo "QUESTION"))
-                     :sort
-                     (todo priority date)
-                     :super-groups org-super-agenda-groups :title "Agenda-like")))
+      :after org)      
     #+end_src
     
 *** Agenda Views
