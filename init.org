@@ -977,6 +977,7 @@ This is WIP as ox-latex isn't in Nix.
          org-agenda-start-on-weekday nil
          org-agenda-block-separator  nil
          org-agenda-remove-tags      t)
+   (define-key custom-bindings-map (kbd "C-c a") 'org-agenda)
    #+end_src
 
 *** Super Agenda
