@@ -798,7 +798,7 @@ The following code is taken from Lars Tveito.
   :defer t)
 #+end_src
 
-** Multiple Cursors
+** Multiple Cursors   
 [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]] is a package I use far to little.
 
 The following code is taken from Lars Tveito
@@ -814,6 +814,14 @@ The following code is taken from Lars Tveito
               ("C-c n" . mc/mark-next-like-this)))
 #+end_src
 
+** Try
+   [[https://github.com/larstvei/Try][Try]] is a package that allows you to try other packages without downloading
+   them.
+
+   #+begin_src emacs-lisp
+   (use-package try
+     :defer t)
+   #+end_src
 * Org
 [[https://orgmode.org/][Org mode]] is extremely nice for note-taking, and I use it nearly every day.
 
