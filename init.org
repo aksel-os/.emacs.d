@@ -297,6 +297,31 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
   (catppuccin-reload))
 #+end_src
 
+**** Changing theme with System Theme
+     [[https://github.com/LionyxML/auto-dark-emacs][Auto-Dark for Emacs]] is a package for switching your themes based on the
+     systems theme.
+
+     This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-catppuccin][this]] blog post.
+
+     #+begin_src emacs-lisp
+     (use-package auto-dark
+     :ensure t
+     :config
+     (ignore-errors
+       (setq auto-dark-themes '((catppuccin) (catppuccin)))
+
+       (add-hook 'auto-dark-dark-mode-hook
+                 (lambda ()
+                   (setq catppuccin-flavor 'frappe)
+                   (catppuccin-reload)))
+
+       (add-hook 'auto-dark-light-mode-hook
+                 (lambda ()
+                   (setq catppuccin-flavor 'latte)
+                   (catppuccin-reload)))     
+       (auto-dark-mode t)))
+     #+end_src
+     
 ** Fonts
 *** Default, Fixed, and Variable
 My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
