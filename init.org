@@ -1052,13 +1052,15 @@ This is WIP as ox-latex isn't in Nix.
     (setq org-agenda-deadline-leaders '("Deadline:  " "In %2d d.: " "%2d d. ago: "))
     #+end_src
     
-*** Keybindings
-    Wow, very nice, very amazing
-    
-    #+begin_src emacs-lisp
-    (define-key custom-bindings-map (kbd "C-c a") 'org-agenda)
-    #+end_src
 ** Tasks
+   Tasks are incredible for seeing at a glance the state of your stuffs,
+   combine that with priorities and you get a very powerful utility.
+
+   #+begin_src emacs-lisp
+   (with-eval-after-load 'org
+     (define-key org-mode-map (kbd "C-c t") 'org-todo))
+   #+end_src
+   
 *** Task Priorities
     Sometimes 3 isn't enough, so giga biga boom, now we have 5.
     
