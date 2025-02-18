@@ -4,7 +4,7 @@
 :properties:
 #+property: header-args :tangle yes
 #+options: toc:2 num:nil
-#+startup: content
+#+startup: overview
 :end:
 
 * About
@@ -408,7 +408,7 @@ Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-
         dashboard-page-separator "\n\n\n"
         dashboard-items '((projects  . 15)
                           (agenda    . 7)
-                          (recents   . 15)
+                          (recents   . 10)
                           (bookmarks . 5)))
   (dashboard-setup-startup-hook))
 #+end_src
