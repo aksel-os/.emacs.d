@@ -297,30 +297,42 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
   (catppuccin-reload))
 #+end_src
 
-**** Changing theme with System Theme
-     [[https://github.com/LionyxML/auto-dark-emacs][Auto-Dark for Emacs]] is a package for switching your themes based on the
-     systems theme.
+*** Changing theme with System Theme
+    [[https://github.com/LionyxML/auto-dark-emacs][Auto-Dark for Emacs]] is a package for switching your themes based on the
+    systems theme.
 
-     This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-catppuccin][this]] blog post.
+    This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-catppuccin][this]] blog post.
 
-     #+begin_src emacs-lisp
-     (use-package auto-dark
-     :ensure t
-     :config
-     (ignore-errors
-       (setq auto-dark-themes '((catppuccin) (catppuccin)))
+    #+begin_src emacs-lisp
+    (use-package auto-dark
+    :ensure t
+    :config
+    (ignore-errors
+      (setq auto-dark-themes '((catppuccin) (catppuccin)))
 
-       (add-hook 'auto-dark-dark-mode-hook
-                 (lambda ()
-                   (setq catppuccin-flavor 'frappe)
-                   (catppuccin-reload)))
+      (add-hook 'auto-dark-dark-mode-hook
+                (lambda ()
+                  (setq catppuccin-flavor 'frappe)
+                  (catppuccin-reload)))
 
-       (add-hook 'auto-dark-light-mode-hook
-                 (lambda ()
-                   (setq catppuccin-flavor 'latte)
-                   (catppuccin-reload)))     
-       (auto-dark-mode t)))
-     #+end_src
+      (add-hook 'auto-dark-light-mode-hook
+                (lambda ()
+                  (setq catppuccin-flavor 'latte)
+                  (catppuccin-reload)))     
+      (auto-dark-mode t)))
+    #+end_src
+
+*** Disable themes when switching
+    When you change themes with =M-x load-theme=, the current theme is not
+    disabled which is incredibly annoying, and causes weird colors if you load
+    another theme. The following code fixes that, and is taken from Lars Tveito.
+
+    #+begin_src emacs-lisp
+    (defun disable-custom-themes (theme &optional no-confirm no-enable)
+      (mapc 'disable-theme custom-enabled-themes))
+
+    (advice-add 'load-theme :before #'disable-custom-themes)
+    #+end_src
      
 ** Fonts
 *** Default, Fixed, and Variable
