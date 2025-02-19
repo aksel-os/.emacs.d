@@ -1056,9 +1056,9 @@ This is WIP as ox-latex isn't in Nix.
     (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
 
     (setq org-priority-faces
-          '((65 . "#ffadad")
-            (66 . "#ffd6a5")
-            (67 . "#fdffb6")
+          '((65 . "#ff0e00")
+            (66 . "#ff8c00")
+            (67 . "#ffec5d")
             (68 . "#a0c4ff")
             (69 . "#bdb2ff")
             (70 . "#ffc6ff")))   
