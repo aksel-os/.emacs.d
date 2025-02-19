@@ -296,14 +296,14 @@ I like to have different colors depending on the level, [[https://github.com/Fan
 #+end_src
 
 ** Theme
-I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the frappe theme as my default.
+I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the latte flavour as my default.
 
 #+begin_src emacs-lisp
 (use-package catppuccin-theme
   :ensure t
   :config
   (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'frappe) ;; 'latte, 'frappe, 'macchiato, or 'mocha)
+  (setq catppuccin-flavor 'latte) ;; 'latte, 'frappe, 'macchiato, or 'mocha)
   (catppuccin-reload))
 #+end_src
 
