@@ -18,7 +18,7 @@ I have *borrowed* a lot of code from other repositories, the main ones being:
 I've also tried to reference most of the code taken in instances of me finding them in threads.
 
 ** Installation
-#+begin_src sh tangle: no
+#+begin_src sh :tangle no
 git clone https://github.com/aksel-os/.emacs.d
 #+end_src
 
