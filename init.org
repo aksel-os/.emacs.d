@@ -251,8 +251,8 @@ Keeping a custom keymap that holds all the custom bindings seemed useful. This m
 On mac, I rebind my right option as meta, and keep my left option as a mac key.
 
 #+begin_src emacs-lisp
-(setq mac-option-modifier 'none
-	  mac-right-option-modifier 'meta)
+(setq mac-right-option-modifier 'none
+	  mac-option-modifier 'meta)
 #+end_src
 
 ** Unbound Default Keys
@@ -757,8 +757,9 @@ I got this from Sophie Bosio, and it seemed interesting.
 #+begin_src emacs-lisp
 (use-package blamer
   :after magit
-  :bind (("C-c g i" . blamer-show-commit-info)
-         ("C-c g b" . blamer-show-posframe-commit-info))
+  :bind (:map custom-bindings-map
+              ("C-c g i" . blamer-show-commit-info)
+              ("C-c g b" . blamer-show-posframe-commit-info))
   :defer 20
   :custom
   (blamer-idle-time                 0.3)
@@ -767,7 +768,7 @@ I got this from Sophie Bosio, and it seemed interesting.
   (blamer-datetime-formatter        "[%s]")
   (blamer-commit-formatter          " ● %s")
   :custom-face
-  (blamer-face ((t :foreground "#7aa2cf"
+  (blamer-face ((t :foreground "#008b8b"
                     :background nil
                     :height 1
                     :italic nil))))
