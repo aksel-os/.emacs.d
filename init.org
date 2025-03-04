@@ -243,7 +243,7 @@ As stated earlier I mainly use nix on my systems, but nix on windows is somethin
 Keeping a custom keymap that holds all the custom bindings seemed useful. This map can be activated by using a =minor-mode= that will inhibit other =major-modes= from overriding the binds.
 
 #+begin_src emacs-lisp
-(defvar custom-bindings-map (make-keymap)
+(defvar custom-bindings-map (make-sparse-keymap)
   "A keymap for custom keybindings.")
 #+end_src
 
