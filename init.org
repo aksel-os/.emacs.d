@@ -1128,11 +1128,13 @@ I use Nix with direnv, [[https://github.com/purcell/envrc][envrc]] uses the dire
 #+end_src
 
 ** Eglot
+NOTE: Outdated as I'm transitioning to lsp-mode
+   
 I use Eglot as my lsp, mainly because it is built-in.
 
 The following code is from Lars Tveito, mainly because I haven't had the time to look properly into all the settings myself.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package eglot
   :defer t
   :hook (eglot-managed-mode . (lambda ()
@@ -1144,29 +1146,71 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
                '(web-mode . ("svelteserver" "--stdio"))))
 #+end_src
 
+** LSP-mode
+[[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] is an emacs client for LSPs. I use it for Java and C. 
+   
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :defer t
+  :hook ((java-mode             . lsp)
+         (c-mode                . lsp)
+         (lsp-mode              . lsp-enable-which-key-integration))
+
+  :bind (:map lsp-mode-map
+              ("M-<return>" . lsp-execute-code-action)
+              ("C-M-."      . lsp-find-references)
+              ("C-c r"      . lsp-rename))
+  
+  :config
+  (setq lsp-diagnostics-provider :flycheck)
+
+  (setq lsp-auto-guess-root t) ;; Enable lsp-mode for standalone files
+
+  (setq lsp-enable-on-type-formatting nil)
+  
+  ;; Visual features
+  (setq lsp-headerline-breadcrumb-enable t    ;; No breadcrumbs
+        lsp-lens-enable                  nil  ;; No lenses
+
+        ;; Enable code actions in the mode line
+        lsp-modeline-code-actions-enable t
+        lsp-modeline-code-action-fallback-icon "✦"
+
+        ;; Limit raising of the echo area to show docs
+        lsp-signature-doc-lines 3)
+  
+  (setq lsp-file-watch-threshold  1500)
+  (setq lsp-format-buffer-on-save nil)
+
+  (with-eval-after-load 'lsp-modeline
+    (set-face-attribute 'lsp-modeline-code-actions-preferred-face nil
+                        :inherit 'font-lock-comment-face)
+    (set-face-attribute 'lsp-modeline-code-actions-face nil
+                        :inherit 'font-lock-comment-face)))
+#+end_src
+
+*** LSP-ui
+[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]] gives UI-capabilities to =lsp-mode=.    
+
+#+begin_src emacs-lisp
+(use-package lsp-ui
+  :after lsp-mode
+  :config
+  (setq lsp-ui-sideline-enable nil
+        lsp-ui-doc-enable      nil))
+#+end_src
+
 ** Python
 #+begin_src emacs-lisp
-(setq python-shell-interpreter "python3.12")
-(add-hook 'python-mode-hook
-          (lambda () (setq forward-sexp-function nil)))
+(use-package lsp-pyright
+  :hook (python-mode . lsp)
+  :custom (lsp-pyright-langserver-command "pyright"))
 #+end_src
 
 ** Java
-NOTE: Outdated as I've added YASnippets
-
-Abbreviations for the most tedious Java stuffs
-
 #+begin_src emacs-lisp
-;; (define-abbrev-table 'java-mode-abbrev-table
-;;   '(("psv" "public static void main(String[] args) {" nil 0)
-;;     ("sopl" "System.out.println" nil 0)
-;;     ("sop" "System.out.printf" nil 0)))
-#+end_src
-
-To use the abbrev table, =abbrev-mode= must be activated.
-
-#+begin_src emacs-lisp
-;; (add-hook 'java-mode-hook 'eglot-ensure)
+(use-package lsp-java
+  :hook (java-mode . lsp))
 #+end_src
 
 ** Nix
