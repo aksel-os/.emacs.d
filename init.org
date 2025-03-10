@@ -635,11 +635,11 @@ I temporarily disable vertico-posframe-mode when searching with consult. When se
 #+end_src
 
 ** Company
-# NOTE: I've had a problem with lsp-mode or company causing emacs to freeze, so ive moved back to corfu + eglot
+ NOTE: I've had a problem with lsp-mode or company causing emacs to freeze, so ive moved back to corfu + eglot
    
    [[https://github.com/company-mode/company-mode][Company]] is a text and code completion framework for Emacs. The name stands for "complete anything".
    
-   #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle no
 (use-package company
   :config
   (setq company-idle-delay                 0.0
@@ -652,11 +652,11 @@ I temporarily disable vertico-posframe-mode when searching with consult. When se
    #+end_src
 
 ** Corfu
-Note: I'm trying LSP-mode, so this is not currently in use
+# Note: I'm trying LSP-mode, so this is not currently in use
    
 I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wish to have a VSCode like completion ui, therefore I have enabled =corfu-auto=. Perhaps one day I'll get proficient with =M-\=.
 
-#+begin_src emacs-lisp : tangle no
+#+begin_src emacs-lisp : tangle yes
 (use-package corfu
   :init
   (global-corfu-mode 1)
@@ -1166,7 +1166,7 @@ I use Eglot as my lsp, mainly because it is built-in.
 
 The following code is from Lars Tveito, mainly because I haven't had the time to look properly into all the settings myself.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle yes
 (use-package eglot
   :defer t
   :hook ((python-mode . eglot-ensure)
@@ -1176,16 +1176,17 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
   :config
   (add-to-list 'eglot-server-programs
                '(python-mode . ("pyright-langserver"))
-               '(java-mode . (""))
-               '(nix-mode . ("rnix-lsp"))))
+               '(java-mode . ("jdtls"))))
 #+end_src
 
 ** LSP-mode
-# NOTE: I've had problems with emacs crashing after adding lsp-mode and company, so im moving back to corfu + eglot
+ NOTE: I've had problems with emacs crashing after adding lsp-mode and company, so im moving back to corfu + eglot
    
-[[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] is an emacs client for LSPs. I use it for Java and C. 
+[[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] is an emacs client for LSPs. I use it for Java and C.
+[[https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/][This]] blog post gives you a visual guide to the elements of lsp-mode, aswell as
+the command to diable them. 
    
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (use-package lsp-mode
   :defer t
   :hook ((java-mode             . lsp)
@@ -1205,7 +1206,7 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
   (setq lsp-enable-on-type-formatting nil)
   
   ;; Visual features
-  (setq lsp-headerline-breadcrumb-enable nil    ;; No breadcrumbs
+  (setq lsp-headerline-breadcrumb-enable nil  ;; No breadcrumbs
         lsp-lens-enable                  nil  ;; No lenses
 
         ;; Enable code actions in the mode line
@@ -1215,7 +1216,7 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
         ;; Limit raising of the echo area to show docs
         lsp-signature-doc-lines 3)
   
-  (setq lsp-file-watch-threshold  1500)
+  (setq lsp-file-watch-threshold  500)
   (setq lsp-format-buffer-on-save nil)
 
   (with-eval-after-load 'lsp-modeline
@@ -1232,19 +1233,19 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
 (use-package lsp-ui
   :after lsp-mode
   :config
-  (setq lsp-ui-sideline-enable nil
+  (setq lsp-ui-sideline-enable t
         lsp-ui-doc-enable      nil))
 #+end_src
 
 ** Python
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (use-package lsp-pyright
   :hook (python-mode . lsp)
   :custom (lsp-pyright-langserver-command "pyright"))
 #+end_src
 
 ** Java
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle no
 (use-package lsp-java
   :hook (java-mode . lsp))
 #+end_src
