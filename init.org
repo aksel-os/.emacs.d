@@ -24,9 +24,81 @@ git clone https://github.com/aksel-os/.emacs.d
 
 I mainly run this with my nix dotfiles, you can view those [[https://github.com/aksel-os/.dotfiles][here]]
 
-* Table of Contents
-
-TODO: All the links brutha
+* Table of Contents                                                   :TOC:
+- [[#about][About]]
+  - [[#installation][Installation]]
+- [[#setup][Setup]]
+  - [[#lexical-scoping][Lexical Scoping]]
+  - [[#tangling][Tangling]]
+- [[#start][Start]]
+  - [[#early-init][Early init]]
+  - [[#garbage-collection][Garbage collection]]
+  - [[#optimizations][Optimizations]]
+  - [[#another-header][Another header]]
+  - [[#packages][Packages]]
+  - [[#mac-os-environment-variables][Mac OS Environment Variables]]
+- [[#custom-keybindings][Custom Keybindings]]
+  - [[#custom-keymap][Custom Keymap]]
+  - [[#mac-os-modifier-keys][Mac OS Modifier Keys]]
+  - [[#unbound-default-keys][Unbound Default Keys]]
+- [[#visual][Visual]]
+  - [[#decluttering][Decluttering]]
+  - [[#open-in-fullscreen][Open in fullscreen]]
+  - [[#styling-delimiters][Styling Delimiters]]
+  - [[#theme][Theme]]
+  - [[#fonts][Fonts]]
+  - [[#modeline][Modeline]]
+  - [[#text-display-modes][Text Display Modes]]
+  - [[#dashboard][Dashboard]]
+- [[#general-editing][General Editing]]
+  - [[#built-ins][Built-ins]]
+  - [[#autosave][Autosave]]
+  - [[#move-where-i-mean][Move Where I Mean]]
+  - [[#text-editing][Text Editing]]
+- [[#buffers-and-frames][Buffers and Frames]]
+  - [[#killing-buffers][Killing Buffers]]
+  - [[#kill-buffer-and-its-associated-file][Kill Buffer and its Associated File]]
+  - [[#rename-buffer-and-its-associated-file][Rename Buffer and its Associated File]]
+- [[#completion][Completion]]
+  - [[#vertico][Vertico]]
+  - [[#vertico-posframe][Vertico Posframe]]
+  - [[#orderless][Orderless]]
+  - [[#company][Company]]
+  - [[#corfu][Corfu]]
+  - [[#cape][Cape]]
+- [[#search][Search]]
+  - [[#marginalia][Marginalia]]
+  - [[#consult][Consult]]
+- [[#misc-packages][Misc. Packages]]
+  - [[#vterm][vterm]]
+  - [[#version-controll][Version Controll]]
+  - [[#snippets][Snippets]]
+  - [[#better-help-buffers][Better Help Buffers]]
+  - [[#spelling][Spelling]]
+  - [[#pdf-tools][PDF Tools]]
+  - [[#editorconfig][EditorConfig]]
+  - [[#multiple-cursors][Multiple Cursors]]
+  - [[#try][Try]]
+  - [[#rainbow-mode][Rainbow Mode]]
+- [[#org][Org]]
+  - [[#toc-org][TOC-Org]]
+  - [[#org-appear][Org Appear]]
+  - [[#org-modern][Org Modern]]
+  - [[#latex-fragtog][LaTeX Fragtog]]
+  - [[#latex-export][LaTeX export]]
+  - [[#agenda][Agenda]]
+  - [[#tasks][Tasks]]
+- [[#programming][Programming]]
+  - [[#direnv][Direnv]]
+  - [[#evil-nerd-commenter][Evil Nerd Commenter]]
+  - [[#flycheck][Flycheck]]
+  - [[#eglot][Eglot]]
+  - [[#lsp-mode][LSP-mode]]
+  - [[#python][Python]]
+  - [[#java][Java]]
+  - [[#nix][Nix]]
+- [[#activating-custom-keybindings][Activating Custom Keybindings]]
+  - [[#activating-the-keymap][Activating the Keymap]]
 
 * Setup
 Because we're using =org-babel-tangle=, any changes done in =~/.emacs.d/init.el= will inevitably be overwritten when =init.org= is saved. The following code is taken from Lars Tveito, and it makes our =init.el= file tangle our =init.org= file and replace its contents.
@@ -933,6 +1005,17 @@ The following code is taken from Sophie Bosio and Lars Tveito
   '(outline-6          ((t (:height 1.1))))
   '(outline-8          ((t (:height 1.1))))
   '(outline-9          ((t (:height 1.1))))))
+#+end_src
+
+** TOC-Org
+[[https://github.com/snosov1/toc-org][toc-org]] helps you to have an up-to-date table of contents in org files without
+exporting.
+
+#+begin_src emacs-lisp
+(use-package toc-org
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'toc-org-mode))
 #+end_src
 
 ** Org Appear
