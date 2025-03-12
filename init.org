@@ -1243,7 +1243,7 @@ I use Nix with direnv, [[https://github.com/purcell/envrc][envrc]] uses the dire
    #+end_src
 
 ** Eglot
-NOTE: Outdated as I'm transitioning to lsp-mode
+# NOTE: Outdated as I'm transitioning to lsp-mode
    
 I use Eglot as my lsp, mainly because it is built-in.
 
@@ -1258,7 +1258,7 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
          (nix-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs
-               '(python-mode . ("pyright-langserver"))
+               '(python-mode . ("pyright"))
                '(java-mode . ("jdtls"))))
 #+end_src
 
