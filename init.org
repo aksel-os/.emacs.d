@@ -902,7 +902,7 @@ and automatically expand it into function templates. I use this over abbrevs.
   :hook (org-mode . jinx-mode)
   :bind ("C-." . jinx-correct)
   :config
-  (setq jinx-languages "en_US nb-no"))
+  (setq jinx-languages "en_US nb-NO"))
 #+end_src
 
 *** Define word
