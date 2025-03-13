@@ -985,6 +985,8 @@ The following code is taken from Sophie Bosio and Lars Tveito
 (use-package org
   :defer t
   :hook (org-mode . olivetti-mode)
+  :bind (:map org-mode-map
+              ("C-c C-c" . org-latex-export-to-pdf))
   :config
   (setq org-adapt-indentation t
       org-hide-leading-stars t
