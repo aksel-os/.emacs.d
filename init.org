@@ -833,6 +833,16 @@ The following is taken from Lars Tveito, with some keybind tweaks.
   :bind (:map custom-bindings-map ("C-c m" . magit-status)))
 #+end_src
 
+*** Magit Forge
+[[https://github.com/magit/forge][Magit Forge]] gives you the ability to work with Git forges, such as GitHub and
+GitLab, from within Magit. This seemed like a good way to move from GitHub
+Desktop to emacs.
+
+#+begin_src emacs-lisp
+(use-package forge
+  :after magit)
+#+end_src
+
 *** Highlighting with =diff-hl=
 [[https://github.com/dgutov/diff-hl][diff-hl]] highlights added, deleted and modified code segments by adding a colored bar on the left side of the buffer.
 
