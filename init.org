@@ -928,22 +928,30 @@ and automatically expand it into function templates. I use this over abbrevs.
 ** PDF Tools
 [[https://github.com/vedang/pdf-tools][PDF Tools]] is, among other things, a replacement of DocView for PDF files. The key difference is that pages are not pre-rendered.
 
-The following code is taken from Lars Tveito.
-
 #+begin_src emacs-lisp
+(defun update-other-buffer()
+  (interactive)
+  (other-window 1)
+  (revert-buffer nil t)
+  (other-window -1))
+
+(defun org-export-to-pdf-and-open ()
+  ;; Expects to be run from an org-mode buffer, and the other buffer already
+  ;; has the pdf open
+  (interactive)
+  (org-latex-export-to-pdf)
+  (update-other-buffer))
+
 (use-package pdf-tools
   :defer t
   :mode "\\.pdf\\'"
   :bind (:map pdf-view-mode-map
-              ("c" . (lambda ()
-                       (interactive)
-                       (if header-line-format
-                           (setq header-line-format nil)
-                         (nano-modeline-pdf-mode))))
               ("j" . pdf-view-next-line-or-next-page)
-              ("k" . pdf-view-previous-line-or-previous-page))  
+              ("k" . pdf-view-previous-line-or-previous-page))
   :init (pdf-loader-install)
-  :config (add-to-list 'revert-without-query ".pdf"))
+  :config
+  (add-to-list 'revert-without-query ".pdf")
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs)))
 #+end_src
 
 ** EditorConfig
@@ -990,14 +998,15 @@ The following code is taken from Lars Tveito
 * Org
 [[https://orgmode.org/][Org mode]] is extremely nice for note-taking, and I use it nearly every day.
 
-The following code is taken from Sophie Bosio and Lars Tveito
+The following code is taken from Sophie Bosio and Lars Tveito.
+[[https://github.com/munen/emacs.d#convenience-functions-when-working-with-pdf-exports][Some extra convenience functions.]]
 
 #+begin_src emacs-lisp
 (use-package org
   :defer t
   :hook (org-mode . olivetti-mode)
   :bind (:map org-mode-map
-              ("C-c C-c" . org-latex-export-to-pdf))
+              ("C-c C-c" . org-export-to-pdf-and-open))
   :config
   (setq org-adapt-indentation t
       org-hide-leading-stars t
@@ -1085,9 +1094,7 @@ exporting.
         org-latex-src-block-backend 'engraved
         org-latex-engraved-theme catppuccin
         org-latex-pdf-process
-        '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
-
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs)))
+        '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
 #+end_src
 
 ** Agenda
