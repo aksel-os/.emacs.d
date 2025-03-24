@@ -89,6 +89,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#agenda][Agenda]]
   - [[#tasks][Tasks]]
   - [[#cloud-sync][Cloud sync]]
+  - [[#org-capture][Org Capture]]
 - [[#programming][Programming]]
   - [[#direnv][Direnv]]
   - [[#evil-nerd-commenter][Evil Nerd Commenter]]
@@ -159,13 +160,12 @@ tangled, and the tangled file is compiled."
 #+end_src
 
 * Start
-  
 ** Early init
 All this code is taken from Sophie Bosio.
 
 The following should go into =early-init.el=, but for some reason my nix doesn't do
 that, so for now it has to go into =init-el=.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp :tangle early-init.el
 ;; Defer garbage collection
 (setq gc-cons-percentage 0.6)
 
@@ -377,11 +377,16 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
 
 #+begin_src emacs-lisp
 (use-package catppuccin-theme
-  :ensure t
   :config
   (load-theme 'catppuccin :no-confirm)
   (setq catppuccin-flavor 'latte) ;; 'latte, 'frappe, 'macchiato, or 'mocha)
   (catppuccin-reload))
+#+end_src
+
+For source blocks I use the [[https://github.com/rougier/nano-theme][nano]] theme as I feel it looks better in pdfs.
+
+#+begin_src emacs-lisp
+(use-package nano-theme)
 #+end_src
 
 *** Changing theme with System Theme
@@ -484,7 +489,7 @@ Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-
         dashboard-center-content t
         dashboard-page-separator "\n\n\n"
         dashboard-items '((projects  . 15)
-                          (agenda    . 7)
+                          ;; (agenda    . 7)
                           (recents   . 10)
                           (bookmarks . 5)))
   (dashboard-setup-startup-hook))
@@ -1094,20 +1099,48 @@ exporting.
   :config
   (setq org-export-allow-bind-keywords t
         org-latex-src-block-backend 'engraved
-        org-latex-engraved-theme catppuccin
+        org-latex-engraved-theme nano-light
         org-latex-pdf-process
         '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
 #+end_src
 
 ** Agenda
-   The following code is currently taken from Sophie Bosio, and I'm slowly
-   tweaking it to fit to my preferences
-
    #+begin_src emacs-lisp
    (setq org-agenda-start-on-weekday nil
          org-agenda-block-separator  nil
-         org-agenda-remove-tags      t)
-   
+         org-agenda-hide-tags-regexp "."
+         org-agenda-include-diary    t)
+
+   (setq org-agenda-prefix-format
+         '((agenda . " %i %-12:c%?-12t% s")
+           (todo   . " ")
+           (tags   . " %i %-12:c")
+           (search . " %i %-12:c")))
+
+   (setq org-agenda-custom-commands
+      '(("g" "Get Things Done (GTD)"
+         ((agenda ""
+                  ((org-agenda-skip-function
+                    '(org-agenda-skip-entry-if 'deadline))
+                   (org-deadline-warning-days 0)))
+          (todo ""
+                ((org-agenda-skip-function
+                  '(org-agenda-skip-entry-if 'deadline))
+                 (org-agenda-prefix-format " %i %-12:c ")
+                 (org-agenda-overriding-header "\nTasks\n")))
+          (agenda nil
+                  ((org-agenda-entry-types '(:deadline))
+                   (org-agenda-format-date "")
+                   (org-deadline-warning-days 7)
+                   ;; (org-agenda-skip-function
+                    ;; '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                   (org-agenda-overriding-header "\nDeadlines")))
+          (tags-todo "inbox"
+                     ((org-agenda-prefix-format "  %?-12t% s")
+                      (org-agenda-overriding-header "\nInbox\n")))
+          (tags "CLOSED>=\"<today>\""
+                ((org-agenda-overriding-header "\nCompleted today\n")))))))
+
    (define-key custom-bindings-map (kbd "C-c a") 'org-agenda)
    #+end_src
 
@@ -1126,42 +1159,6 @@ exporting.
      (org-super-agenda-mode))
    #+end_src
    
-*** Org QL
-    [[https://github.com/alphapapa/org-ql][org-ql]] is a searching tool for Org-mode, including custom query
-    languages, commands, saved searches and agenda-like views, etc.
-    #+begin_src emacs-lisp
-    (use-package org-ql
-      :after org)      
-    #+end_src
-    
-*** Agenda Views
-    #+begin_src emacs-lisp    
-    (setq org-agenda-custom-commands nil)
-
-    (defvar regular-view-groups
-      '((:name "Scheduled"
-               :scheduled t
-               :order 1)
-    	(:name "Deadlines"
-               :deadline t
-               :order 2)))
-
-    (add-to-list 'org-agenda-custom-commands
-    	         '("d" "Day View"
-    		       ((agenda "" ((org-agenda-overriding-header "Day View")
-                                (org-agenda-span 'day)
-                                (org-super-agenda-groups regular-view-groups)))
-    		        (org-ql-block '(todo "PROG") ((org-ql-block-header "\n❯ In Progress")))
-    		        (org-ql-block '(todo "NEXT") ((org-ql-block-header "\n❯ Next Up")))
-                    (org-ql-block '(todo "WAIT") ((org-ql-block-header "\n❯ Waiting")))
-    		        (org-ql-block '(priority "A") ((org-ql-block-header "\n❯ Important"))))))
-    (add-to-list 'org-agenda-custom-commands
-    		     '("e" "Three-Day View"
-                   ((agenda "" ((org-agenda-span 3)
-                                (org-agenda-start-on-weekday nil)
-                                (org-deadline-warning-days 0))))))    
-    #+end_src
-
 *** Displaying Scheduled and Deadline Items
     #+begin_src emacs-lisp
     (setq org-agenda-skip-deadline-if-done  t
@@ -1241,7 +1238,26 @@ exporting.
 
    #+begin_src emacs-lisp
    (setq org-directory "~/Dropbox/org")
-   (setq org-agenda-files (concat org-directory "agenda.org"))
+   (setq org-agenda-files (list "inbox.org" "agenda.org"))
+   #+end_src
+
+** Org Capture
+   Capture lets you quickly store notes with little interruption of your work
+   flow.
+   
+   #+begin_src emacs-lisp
+   (setq org-capture-templates
+         `(("i" "Inbox" entry  (file "inbox.org")
+           ,(concat "* TODO %?\n"
+                    "/Entered on/ %U"))
+           ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
+           ,(concat "* %? :meeting:\n"
+                    "<%<%Y-%m-%d %a %H:00>>"))
+           ("n" "Note" entry  (file "notes.org")
+           ,(concat "* Note (%a)\n"
+                    "/Entered on/ %U\n" "\n" "%?"))))
+
+   (define-key custom-bindings-map (kbd "C-c c") 'org-capture)
    #+end_src
    
 * Programming
