@@ -521,6 +521,8 @@ This is copied for Lars Tveito's repo, as well as from the emacs course he had.
       sentence-end-double-space nil     ; No double space
       custom-file                       ; Customizations in a separate file
       (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file t))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -854,7 +856,7 @@ The following is taken from Lars Tveito, with some keybind tweaks.
 GitLab, from within Magit. This seemed like a good way to move from GitHub
 Desktop to emacs.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package forge
   :after magit)
 #+end_src
@@ -1382,6 +1384,7 @@ the command to diable them.
 
 #+begin_src emacs-lisp
 (use-package lsp-ui
+  :requires lsp-mode
   :after lsp-mode
   :config
   (setq lsp-ui-sideline-enable t
