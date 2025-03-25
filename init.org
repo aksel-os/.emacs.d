@@ -86,6 +86,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#org-modern][Org Modern]]
   - [[#latex-fragtog][LaTeX Fragtog]]
   - [[#latex-export][LaTeX export]]
+  - [[#ox-gfm][Ox-GFM]]
   - [[#agenda][Agenda]]
   - [[#tasks][Tasks]]
   - [[#cloud-sync][Cloud sync]]
@@ -453,7 +454,9 @@ I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
 #+begin_src emacs-lisp
 (use-package doom-modeline
   :ensure t
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-buffer-file-name-style 'file-name))
 #+end_src
 
 ** Text Display Modes
@@ -489,7 +492,7 @@ Instead of the startup screen, I use [[https://github.com/emacs-dashboard/emacs-
         dashboard-center-content t
         dashboard-page-separator "\n\n\n"
         dashboard-items '((projects  . 15)
-                          ;; (agenda    . 7)
+                          (agenda    . 7)
                           (recents   . 10)
                           (bookmarks . 5)))
   (dashboard-setup-startup-hook))
@@ -1087,7 +1090,11 @@ exporting.
 
 #+begin_src emacs-lisp
 (use-package engrave-faces
-  :defer t)
+  :defer t
+  :after org
+  :config
+  (setq org-latex-src-block-backend 'engraved
+        org-latex-engraved-theme 'nano-light))
 #+end_src
 
 # This is WIP as ox-latex isn't in Nix.
@@ -1098,12 +1105,19 @@ exporting.
   :after org
   :config
   (setq org-export-allow-bind-keywords t
-        org-latex-src-block-backend 'engraved
-        org-latex-engraved-theme nano-light
         org-latex-pdf-process
         '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
 #+end_src
 
+** Ox-GFM
+   [[https://github.com/larstvei/ox-gfm][ox-gfm]] is a small exporter that allows you to export your org files into
+   GitHub flavored markdown. It seems semi abandoned, but is the best I could find.
+
+   #+begin_src emacs-lisp
+   (use-package ox-gfm
+     :after org)
+   #+end_src
+   
 ** Agenda
    #+begin_src emacs-lisp
    (setq org-agenda-start-on-weekday nil
