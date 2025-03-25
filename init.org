@@ -419,7 +419,6 @@ This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-c
   (setq auto-dark-polling-interval-seconds 5))
 #+end_src
 
-
 *** Disable themes when switching
 When you change themes with =M-x load-theme=, the current theme is not
 disabled which is incredibly annoying, and causes weird colors if you load
