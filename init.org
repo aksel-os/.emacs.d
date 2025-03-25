@@ -323,7 +323,7 @@ Keeping a custom keymap that holds all the custom bindings seemed useful. This m
 #+end_src
 
 ** Mac OS Modifier Keys
-On mac, I rebind my right option as meta, and keep my left option as a mac key.
+   On mac, I rebind my right option as meta, and keep my left option as a mac key.
 
 #+begin_src emacs-lisp
 (setq mac-right-option-modifier 'none
@@ -380,7 +380,7 @@ I use [[https://github.com/catppuccin/emacs][catppuccin]] as my theme, with the 
 (use-package catppuccin-theme
   :config
   (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'latte) ;; 'latte, 'frappe, 'macchiato, or 'mocha)
+  (setq catppuccin-flavor 'latte) ;; 'latte, 'frappe, 'macchiato, or 'mocha
   (catppuccin-reload))
 #+end_src
 
@@ -391,42 +391,47 @@ For source blocks I use the [[https://github.com/rougier/nano-theme][nano]] them
 #+end_src
 
 *** Changing theme with System Theme
-    [[https://github.com/LionyxML/auto-dark-emacs][Auto-Dark for Emacs]] is a package for switching your themes based on the
-    systems theme.
+[[https://github.com/LionyxML/auto-dark-emacs][Auto-Dark for Emacs]] is a package for switching your themes based on the
+systems theme.
 
-    This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-catppuccin][this]] blog post.
+This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-catppuccin][this]] blog post.
 
-    #+begin_src emacs-lisp
-    (use-package auto-dark
-    :ensure t
-    :config
-    (ignore-errors
-      (setq auto-dark-themes '((catppuccin) (catppuccin)))
+#+begin_src emacs-lisp
+(use-package auto-dark
+  :init
+  (auto-dark-mode t)
+  :hook
+  (auto-dark-dark-mode
+   . (lambda ()
+       (setq catppuccin-flavor 'mocha)
+       (catppuccin-reload)))
+  
+  (auto-dark-light-mode
+   . (lambda ()
+       (setq catppuccin-flavor 'latte)
+       (catppuccin-reload)))
+  :config
+  (setq auto-dark-allow-osascript t)
+  
+  (setq custom-safe-themes t) ; Stop asking me damnit
+  
+  (setq auto-dark-themes '((catppuccin) (catppuccin)))
+  (setq auto-dark-polling-interval-seconds 5))
+#+end_src
 
-      (add-hook 'auto-dark-dark-mode-hook
-                (lambda ()
-                  (setq catppuccin-flavor 'frappe)
-                  (catppuccin-reload)))
-
-      (add-hook 'auto-dark-light-mode-hook
-                (lambda ()
-                  (setq catppuccin-flavor 'latte)
-                  (catppuccin-reload)))     
-      (auto-dark-mode t)))
-    #+end_src
 
 *** Disable themes when switching
-    When you change themes with =M-x load-theme=, the current theme is not
-    disabled which is incredibly annoying, and causes weird colors if you load
-    another theme. The following code fixes that, and is taken from Lars Tveito.
+When you change themes with =M-x load-theme=, the current theme is not
+disabled which is incredibly annoying, and causes weird colors if you load
+another theme. The following code fixes that, and is taken from Lars Tveito.
 
-    #+begin_src emacs-lisp
-    (defun disable-custom-themes (theme &optional no-confirm no-enable)
-      (mapc 'disable-theme custom-enabled-themes))
+#+begin_src emacs-lisp
+(defun disable-custom-themes (theme &optional no-confirm no-enable)
+  (mapc 'disable-theme custom-enabled-themes))
 
-    (advice-add 'load-theme :before #'disable-custom-themes)
-    #+end_src
-     
+(advice-add 'load-theme :before #'disable-custom-themes)
+#+end_src
+    
 ** Fonts
 *** Default, Fixed, and Variable
 My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mono]].
@@ -1090,11 +1095,7 @@ exporting.
 
 #+begin_src emacs-lisp
 (use-package engrave-faces
-  :defer t
-  :after org
-  :config
-  (setq org-latex-src-block-backend 'engraved
-        org-latex-engraved-theme 'nano-light))
+  :after org)
 #+end_src
 
 # This is WIP as ox-latex isn't in Nix.
@@ -1105,6 +1106,8 @@ exporting.
   :after org
   :config
   (setq org-export-allow-bind-keywords t
+        org-latex-src-block-backend 'engraved
+        org-latex-engraved-theme 'nano-light
         org-latex-pdf-process
         '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
 #+end_src
