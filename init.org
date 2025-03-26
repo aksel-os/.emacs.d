@@ -437,10 +437,13 @@ My current preferred font is [[https://www.jetbrains.com/lp/mono/][jetbrains mon
 (when (eq system-type 'darwin)
   (setq akselos/font-height 140))
       
-    (set-face-attribute 'default nil :height akselos/font-height)
+    (set-face-attribute 'default nil
+                        :height akselos/font-height)
 
 (when (member "JetBrainsMono Nerd Font Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "JetBrainsMono Nerd Font Mono" :height akselos/font-height))
+  (set-face-attribute 'default nil
+                      :font "JetBrainsMono Nerd Font Mono"
+                      :height akselos/font-height))
 #+end_src
 
 *** Icons and Emojis
