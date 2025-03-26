@@ -772,7 +772,7 @@ I often press =C-x C-b= when I only mean to press =C-x b=.
   :bind (:map custom-bindings-map
               ("C-x b"   . consult-buffer)
               ("C-x C-b" . consult-buffer)
-              ("C-c r"   . consult-ripgrep)
+              ("C-r"     . consult-ripgrep)
               ("C-s"     . consult-line))
   :config
   (setq consult-preview-key (list :debounce 0.1 'any)))
