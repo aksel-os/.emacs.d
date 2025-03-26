@@ -63,7 +63,6 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#vertico][Vertico]]
   - [[#vertico-posframe][Vertico Posframe]]
   - [[#orderless][Orderless]]
-  - [[#company][Company]]
   - [[#corfu][Corfu]]
   - [[#cape][Cape]]
 - [[#search][Search]]
@@ -96,9 +95,6 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#evil-nerd-commenter][Evil Nerd Commenter]]
   - [[#flycheck][Flycheck]]
   - [[#eglot][Eglot]]
-  - [[#lsp-mode][LSP-mode]]
-  - [[#python][Python]]
-  - [[#java][Java]]
   - [[#nix][Nix]]
 - [[#activating-custom-keybindings][Activating Custom Keybindings]]
   - [[#keybind-overrides][Keybind Overrides]]
@@ -722,23 +718,6 @@ I temporarily disable vertico-posframe-mode when searching with consult. When se
         orderless-component-separator "[ |]"))
 #+end_src
 
-** Company
- NOTE: I've had a problem with lsp-mode or company causing emacs to freeze, so ive moved back to corfu + eglot
-   
-   [[https://github.com/company-mode/company-mode][Company]] is a text and code completion framework for Emacs. The name stands for "complete anything".
-   
-   #+begin_src emacs-lisp :tangle no
-(use-package company
-  :config
-  (setq company-idle-delay                 0.0
-        company-minimum-prefix-length      3
-        company-tooltip-align-annotations  t
-        company-tooltip-annotation-padding 1
-        company-tooltip-margin             1
-        company-detect-icons-margin        'company-dot-icons-margin)
-  (global-company-mode t))
-   #+end_src
-
 ** Corfu
 # Note: I'm trying LSP-mode, so this is not currently in use
    
@@ -1312,8 +1291,6 @@ I use Nix with direnv, [[https://github.com/purcell/envrc][envrc]] uses the dire
    #+end_src
 
 ** Eglot
-# NOTE: Outdated as I'm transitioning to lsp-mode
-   
 I use Eglot as my lsp, mainly because it is built-in.
 
 The following code is from Lars Tveito, mainly because I haven't had the time to look properly into all the settings myself.
@@ -1329,78 +1306,6 @@ The following code is from Lars Tveito, mainly because I haven't had the time to
   (add-to-list 'eglot-server-programs
                '(python-mode . ("pyright"))
                '(java-mode . ("jdtls"))))
-#+end_src
-
-** LSP-mode
- NOTE: I've had problems with emacs crashing after adding lsp-mode and company, so im moving back to corfu + eglot
-   
-[[https://github.com/emacs-lsp/lsp-mode][LSP-mode]] is an emacs client for LSPs. I use it for Java and C.
-[[https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/][This]] blog post gives you a visual guide to the elements of lsp-mode, aswell as
-the command to diable them. 
-   
-#+begin_src emacs-lisp :tangle no
-(use-package lsp-mode
-  :defer t
-  :hook ((java-mode             . lsp)
-         (c-mode                . lsp)
-         (lsp-mode              . lsp-enable-which-key-integration))
-
-  :bind (:map lsp-mode-map
-              ("M-<return>" . lsp-execute-code-action)
-              ("C-M-."      . lsp-find-references)
-              ("C-c r"      . lsp-rename))
-  
-  :config
-  (setq lsp-diagnostics-provider :flycheck)
-
-  (setq lsp-auto-guess-root t) ;; Enable lsp-mode for standalone files
-
-  (setq lsp-enable-on-type-formatting nil)
-  
-  ;; Visual features
-  (setq lsp-headerline-breadcrumb-enable nil  ;; No breadcrumbs
-        lsp-lens-enable                  nil  ;; No lenses
-
-        ;; Enable code actions in the mode line
-        lsp-modeline-code-actions-enable t
-        lsp-modeline-code-action-fallback-icon "✦"
-
-        ;; Limit raising of the echo area to show docs
-        lsp-signature-doc-lines 3)
-  
-  (setq lsp-file-watch-threshold  500)
-  (setq lsp-format-buffer-on-save nil)
-
-  (with-eval-after-load 'lsp-modeline
-    (set-face-attribute 'lsp-modeline-code-actions-preferred-face nil
-                        :inherit 'font-lock-comment-face)
-    (set-face-attribute 'lsp-modeline-code-actions-face nil
-                        :inherit 'font-lock-comment-face)))
-#+end_src
-
-*** LSP-ui
-[[https://github.com/emacs-lsp/lsp-ui][lsp-ui]] gives UI-capabilities to =lsp-mode=.    
-
-#+begin_src emacs-lisp
-(use-package lsp-ui
-  :requires lsp-mode
-  :after lsp-mode
-  :config
-  (setq lsp-ui-sideline-enable t
-        lsp-ui-doc-enable      nil))
-#+end_src
-
-** Python
-#+begin_src emacs-lisp :tangle no
-(use-package lsp-pyright
-  :hook (python-mode . lsp)
-  :custom (lsp-pyright-langserver-command "pyright"))
-#+end_src
-
-** Java
-#+begin_src emacs-lisp :tangle no
-(use-package lsp-java
-  :hook (java-mode . lsp))
 #+end_src
 
 ** Nix
