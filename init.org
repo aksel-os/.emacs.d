@@ -1311,7 +1311,6 @@ languages config, so the =eglot= config is quite tame.
 ** Python
    #+begin_src emacs-lisp
    (use-package py-autopep8
-     :after python-mode
      :config
      (setq py-autopep8-options '("--aggressive")))
    #+end_src
