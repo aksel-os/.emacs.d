@@ -992,105 +992,105 @@ The following code is taken from Lars Tveito
      (org-mode  .  rainbow-mode))
    #+end_src
 * Org
-[[https://orgmode.org/][Org mode]] is extremely nice for note-taking, and I use it nearly every day.
+  [[https://orgmode.org/][Org mode]] is extremely nice for note-taking, and I use it nearly every day.
 
-The following code is taken from Sophie Bosio and Lars Tveito.
-[[https://github.com/munen/emacs.d#convenience-functions-when-working-with-pdf-exports][Some extra convenience functions.]]
+  The following code is taken from Sophie Bosio and Lars Tveito.
+  [[https://github.com/munen/emacs.d#convenience-functions-when-working-with-pdf-exports][Some extra convenience functions.]]
 
-#+begin_src emacs-lisp
-(use-package org
-  :ensure nil
-  :defer t
-  :hook (org-mode . olivetti-mode)
-  :bind (:map org-mode-map
-              ("C-c C-c" . org-export-to-pdf-and-open))
-  :config
-  (setq org-adapt-indentation t
-        org-hide-leading-stars t
-        org-pretty-entities t
-        org-startup-folded 'showeverything
-        org-src-fontify-natively t
-	    org-src-tab-acts-natively t
-        org-edit-src-content-indentation 0)
-  
-  ;; Resize Org headings
-  (custom-set-faces
-  '(org-document-title ((t (:height 1.6))))
-  '(outline-1          ((t (:height 1.25))))
-  '(outline-2          ((t (:height 1.2))))
-  '(outline-3          ((t (:height 1.15))))
-  '(outline-4          ((t (:height 1.1))))
-  '(outline-5          ((t (:height 1.1))))
-  '(outline-6          ((t (:height 1.1))))
-  '(outline-8          ((t (:height 1.1))))
-  '(outline-9          ((t (:height 1.1))))))
-#+end_src
+  #+begin_src emacs-lisp
+  (use-package org
+    :ensure nil
+    :defer t
+    :hook (org-mode . olivetti-mode)
+    :bind (:map org-mode-map
+                ("C-c C-c" . org-export-to-pdf-and-open))
+    :config
+    (setq org-adapt-indentation t
+          org-hide-leading-stars t
+          org-pretty-entities t
+          org-startup-folded 'showeverything
+          org-src-fontify-natively t
+  	    org-src-tab-acts-natively t
+          org-edit-src-content-indentation 0)
+    
+    ;; Resize Org headings
+    (custom-set-faces
+    '(org-document-title ((t (:height 1.6))))
+    '(outline-1          ((t (:height 1.25))))
+    '(outline-2          ((t (:height 1.2))))
+    '(outline-3          ((t (:height 1.15))))
+    '(outline-4          ((t (:height 1.1))))
+    '(outline-5          ((t (:height 1.1))))
+    '(outline-6          ((t (:height 1.1))))
+    '(outline-8          ((t (:height 1.1))))
+    '(outline-9          ((t (:height 1.1))))))
+  #+end_src
 
 ** TOC-Org
-[[https://github.com/snosov1/toc-org][toc-org]] helps you to have an up-to-date table of contents in org files without
-exporting.
+   [[https://github.com/snosov1/toc-org][toc-org]] helps you to have an up-to-date table of contents in org files without
+   exporting.
 
-#+begin_src emacs-lisp
-(use-package toc-org
-  :after org
-  :hook
-  (org-mode . toc-org-mode))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package toc-org
+     :after org
+     :hook
+     (org-mode . toc-org-mode))
+   #+end_src
 
 ** Org Appear
-[[https://github.com/awth13/org-appear][org-appear]] makes invisible parts of Org elements appear visible.
+   [[https://github.com/awth13/org-appear][org-appear]] makes invisible parts of Org elements appear visible.
 
-#+begin_src emacs-lisp
-(use-package org-appear
-  :commands (org-appear-mode)
-  :hook     (org-mode . org-appear-mode)
-  :config 
-  (setq org-hide-emphasis-markers t)  ;; Must be activated for org-appear to work
-  (setq org-appear-autoemphasis   t   ;; Show bold, italics, verbatim, etc.
-        org-appear-autolinks      t   ;; Show links
-        org-appear-autosubmarkers t)) ;; Show sub- and superscripts
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package org-appear
+     :commands (org-appear-mode)
+     :hook     (org-mode . org-appear-mode)
+     :config 
+     (setq org-hide-emphasis-markers t)  ;; Must be activated for org-appear to work
+     (setq org-appear-autoemphasis   t   ;; Show bold, italics, verbatim, etc.
+           org-appear-autolinks      t   ;; Show links
+           org-appear-autosubmarkers t)) ;; Show sub- and superscripts
+   #+end_src
 
 ** Org Modern
-[[https://github.com/minad/org-modern][Org Modern]] implements a modern style for your Org buffers.
+   [[https://github.com/minad/org-modern][Org Modern]] implements a modern style for your Org buffers.
 
-#+begin_src emacs-lisp
-(use-package org-modern
-  :after org
-  :hook (org-mode . org-modern-mode)
-  :config
-  (setq org-modern-block-fringe nil
-        org-modern-star 'replace))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package org-modern
+     :after org
+     :hook (org-mode . org-modern-mode)
+     :config
+     (setq org-modern-block-fringe nil
+           org-modern-star 'replace))
+   #+end_src
 
 ** LaTeX Fragtog
-[[https://github.com/io12/org-fragtog][org-fragtog]] works like org-appear, but for LaTeX fragments.
+   [[https://github.com/io12/org-fragtog][org-fragtog]] works like org-appear, but for LaTeX fragments.
 
-#+begin_src emacs-lisp
+   #+begin_src emacs-lisp
 (use-package org-fragtog
   :after org
   :hook (org-mode . org-fragtog-mode))
-#+end_src
+   #+end_src
 
 ** LaTeX export
-[[https://github.com/tecosaur/engrave-faces][engrave-faces]] syntax highlights source blocks based on your color theme.
+   [[https://github.com/tecosaur/engrave-faces][engrave-faces]] syntax highlights source blocks based on your color theme.
 
-#+begin_src emacs-lisp
-(use-package engrave-faces
-  :after org)
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package engrave-faces
+     :after org)
+   #+end_src
 
-#+begin_src emacs-lisp
-(use-package ox-latex
-  :ensure nil
-  :after org
-  :config
-  (setq org-export-allow-bind-keywords t
-        org-latex-src-block-backend 'engraved
-        org-latex-engraved-theme 'nano-light
-        org-latex-pdf-process
-        '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package ox-latex
+     :ensure nil
+     :after org
+     :config
+     (setq org-export-allow-bind-keywords t
+           org-latex-src-block-backend 'engraved
+           org-latex-engraved-theme 'nano-light
+           org-latex-pdf-process
+           '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f %f")))
+   #+end_src
 
 ** Ox-GFM
    [[https://github.com/larstvei/ox-gfm][ox-gfm]] is a small exporter that allows you to export your org files into
@@ -1260,11 +1260,11 @@ exporting.
    [[https://github.com/redguardtoo/evil-nerd-commenter][Evil Nerd Commenter]] automatically detects most programming languages, and
    applies the appropriate commenting.
 
-#+begin_src emacs-lisp
-(use-package evil-nerd-commenter
-  :defer t
-  :bind (:map custom-bindings-map ("C-ø" . evilnc-comment-or-uncomment-lines)))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package evil-nerd-commenter
+     :defer t
+     :bind (:map custom-bindings-map ("C-ø" . evilnc-comment-or-uncomment-lines)))
+   #+end_src
 
 ** Flycheck
    [[https://github.com/flycheck/flycheck][flycheck]] is a modern on-the-fly syntax checking extension for GNU Emacs, and
@@ -1291,6 +1291,10 @@ exporting.
      (add-to-list 'eglot-server-programs
                   '(python-mode . ("pyright"))
                   '(java-mode   . ("jdtls"))))
+
+   (defun format-on-save ()
+     "Formats the buffer before save"
+     (add-hook 'before-save-hook #'eglot-format-buffer nil t))
    #+end_src
 
 ** Python
@@ -1318,8 +1322,7 @@ exporting.
      :ensure nil
      :hook
      (java-mode . eglot-ensure)
-     (java-mode . (lambda ()
-                    (add-hook 'after-save-hook #'eglot-format-buffer nil t))))
+     (java-mode . format-on-save))
    #+end_src
    
 ** Nix
