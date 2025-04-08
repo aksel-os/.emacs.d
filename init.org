@@ -999,6 +999,7 @@ The following code is taken from Sophie Bosio and Lars Tveito.
 
 #+begin_src emacs-lisp
 (use-package org
+  :ensure nil
   :defer t
   :hook (org-mode . olivetti-mode)
   :bind (:map org-mode-map
@@ -1246,14 +1247,14 @@ exporting.
    I use Nix with direnv, [[https://github.com/purcell/envrc][envrc]] uses the direnv tool to determine
    per-directory/project environment variables and then set those environment variables on a per-buffer basis.
 
-#+begin_src emacs-lisp
-(use-package envrc
-  :if (executable-find "direnv")
-  :init
-  (setq envrc-debug t)
-  (add-hook 'after-init-hook (lambda () (envrc-global-mode 1)))
-  (advice-add 'cider-jack-in :around #'envrc-propagate-environment))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package envrc
+     :if (executable-find "direnv")
+     :init
+     (setq envrc-debug t)
+     (add-hook 'after-init-hook (lambda () (envrc-global-mode 1)))
+     (advice-add 'cider-jack-in :around #'envrc-propagate-environment))
+   #+end_src
 
 ** Evil Nerd Commenter
    [[https://github.com/redguardtoo/evil-nerd-commenter][Evil Nerd Commenter]] automatically detects most programming languages, and
@@ -1267,13 +1268,15 @@ exporting.
 
 ** Flycheck
    [[https://github.com/flycheck/flycheck][flycheck]] is a modern on-the-fly syntax checking extension for GNU Emacs, and
-   it is required for LSP-mode.
+   works together with your lsp.
    
    #+begin_src emacs-lisp
- (use-package flycheck
-  :defer t
-  :init (global-flycheck-mode)
-  :config (setq flycheck-display-errors-function #'ignore))
+   (use-package flycheck
+    :defer t
+    :init
+    (global-flycheck-mode 1)
+    :config
+    (setq flycheck-display-errors-function #'ignore))
    #+end_src
 
 ** Eglot
@@ -1281,14 +1284,14 @@ exporting.
    prefer configuring =eglot-ensure= and eventual after save hooks in the specified
    languages config, so the =eglot= config is quite tame.
 
-#+begin_src emacs-lisp
-(use-package eglot
-  :defer t
-  :config
-  (add-to-list 'eglot-server-programs
-               '(python-mode . ("pyright"))
-               '(java-mode   . ("jdtls"))))
-#+end_src
+   #+begin_src emacs-lisp
+   (use-package eglot
+     :defer t
+     :config
+     (add-to-list 'eglot-server-programs
+                  '(python-mode . ("pyright"))
+                  '(java-mode   . ("jdtls"))))
+   #+end_src
 
 ** Python
    [[https://codeberg.org/ideasman42/emacs-py-autopep8][py-autopep8]] provides commands, which use the external autopep8 tool to tidy up the current buffer according to Python's PEP8.
@@ -1311,34 +1314,34 @@ exporting.
    hook is a local hook.
    
    #+begin_src emacs-lisp
-      (use-package java-mode
-        :ensure nil
-        :hook
-        (java-mode . eglot-ensure)
-        (java-mode . (lambda ()
-                       (add-hook 'after-save-hook #'eglot-format-buffer nil t))))
+   (use-package java-mode
+     :ensure nil
+     :hook
+     (java-mode . eglot-ensure)
+     (java-mode . (lambda ()
+                    (add-hook 'after-save-hook #'eglot-format-buffer nil t))))
    #+end_src
    
 ** Nix
-#+begin_src emacs-lisp
-(use-package nix-mode
-  :mode ("\\.nix\\'" "\\.nix.in\\'")
-  :hook
-  (nix-mode . eglot-ensure))
+   #+begin_src emacs-lisp
+   (use-package nix-mode
+     :mode ("\\.nix\\'" "\\.nix.in\\'")
+     :hook
+     (nix-mode . eglot-ensure))
 
-(use-package nix-drv-mode
-  :ensure nix-mode
-  :mode "\\.drv\\'")
+   (use-package nix-drv-mode
+     :ensure nix-mode
+     :mode "\\.drv\\'")
 
-(use-package nix-shell
-  :ensure nix-mode
-  :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+   (use-package nix-shell
+     :ensure nix-mode
+     :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
 
-(use-package nix-repl
-  :ensure nix-mode
-  :commands (nix-repl))
-#+end_src
-
+   (use-package nix-repl
+     :ensure nix-mode
+     :commands (nix-repl))
+   #+end_src
+   
 * Activating Custom Keybindings
 ** Keybind Overrides 
 #+begin_src emacs-lisp 
