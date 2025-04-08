@@ -1292,7 +1292,7 @@ The following code is taken from Lars Tveito
                   '(python-mode . ("pyright"))
                   '(java-mode   . ("jdtls"))))
 
-   (defun format-on-save ()
+   (defun eglot-format-on-save ()
      "Formats the buffer before save"
      (add-hook 'before-save-hook #'eglot-format-buffer nil t))
    #+end_src
@@ -1322,7 +1322,7 @@ The following code is taken from Lars Tveito
      :ensure nil
      :hook
      (java-mode . eglot-ensure)
-     (java-mode . format-on-save))
+     (java-mode . eglot-format-on-save))
    #+end_src
    
 ** Nix
