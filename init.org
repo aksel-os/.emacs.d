@@ -164,7 +164,7 @@ All this code is taken from Sophie Bosio.
 
 The following should go into =early-init.el=, but for some reason my nix doesn't do
 that, so for now it has to go into =init-el=.
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp
 ;; Defer garbage collection
 (setq gc-cons-percentage 0.6)
 
@@ -340,7 +340,7 @@ I keep accidentally zooming when I'm scrolling through documents, so I unbind th
 ** Decluttering
 This should go into =early-init.el=, but as stated earlier, it no work with nix.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp
 (dolist (mode
          '(tool-bar-mode                ; No toolbars, more room for text
            scroll-bar-mode              ; No scroll bars either
@@ -351,7 +351,7 @@ This should go into =early-init.el=, but as stated earlier, it no work with nix.
 I'm currently testing this to see if there really is a difference, this should
 also go into =early-init.el=.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 (add-to-list 'default-frame-alist '(internal-border-width . 24))
 #+end_src
@@ -1289,7 +1289,8 @@ The following code is taken from Lars Tveito
      :config
      (add-to-list 'eglot-server-programs
                   '(python-mode . ("pyright"))
-                  '(java-mode   . ("jdtls"))))
+                  '(java-mode   . ("jdtls"))
+                  '(nix-mode    . ("nil"))))
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
@@ -1326,7 +1327,8 @@ The following code is taken from Lars Tveito
    (use-package nix-mode
      :mode ("\\.nix\\'" "\\.nix.in\\'")
      :hook
-     (nix-mode . eglot-ensure))
+     (nix-mode . eglot-ensure)
+     (nix-mode . eglot-format-on-save))
 
    (use-package nix-drv-mode
      :ensure nix-mode
