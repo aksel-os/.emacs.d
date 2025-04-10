@@ -252,16 +252,6 @@ I get some compile warnings, this should hopefully remove them. They're usually 
 #+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
 (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
-
-(require 'warnings)
-
-(defun suppress-lexical-binding-warnings (warn)
-  "Suppress warnings about missing lexical-binding cookies."
-  (if (string-match "Missing ‘lexical-binding’ cookie" (car warn))
-      (setq suppress-without-warning t) ; suppress the warning
-    nil))
-
-(add-hook 'warning-filter-hook 'suppress-lexical-binding-warnings)
 #+end_src
 
 Taken from Doom Emacs =core.el=
@@ -944,6 +934,7 @@ and automatically expand it into function templates. I use this over abbrevs.
   ;; Expects to be run from an org-mode buffer, and the other buffer already
   ;; has the pdf open
   (interactive)
+  (save-buffer)
   (org-latex-export-to-pdf)
   (update-other-buffer))
 
@@ -1329,7 +1320,12 @@ The following code is taken from Lars Tveito
      :ensure nil
      :hook
      (java-mode . eglot-ensure)
-     (java-mode . eglot-format-on-save))
+     (java-mode . eglot-format-on-save)
+     (java-mode . (lambda ()
+                    (local-set-key (kbd "C-c C-c") 'compile)))
+     (java-mode . (lambda ()
+                    (setq-local compile-command
+                         (concat "javac " buffer-file-name)))))
    #+end_src
    
 ** Nix
