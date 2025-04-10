@@ -252,6 +252,7 @@ I get some compile warnings, this should hopefully remove them. They're usually 
 #+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
 (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+;; (setq warning-suppress-types '((lexical-binding)))
 #+end_src
 
 Taken from Doom Emacs =core.el=
@@ -1289,8 +1290,8 @@ The following code is taken from Lars Tveito
      :config
      (add-to-list 'eglot-server-programs
                   '(python-mode . ("pyright"))
-                  '(java-mode   . ("jdtls"))
-                  '(nix-mode    . ("nil"))))
+                  '(java-mode   . ("jdtls"))))
+                  ;; '(nix-mode    . ("nil"))))
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
