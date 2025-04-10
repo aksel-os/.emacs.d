@@ -10,7 +10,7 @@
 * About
 This is my attempt at a [[https://leanpub.com/lit-config/read][literate configuration]] to give me a better way of documenting my config choices for the future. 
 
-I have *borrowed* a lot of code from other repositories, the main ones being:
+I have borrowed a lot of code from other repositories, the main ones being:
 - [[https://github.com/larstvei/dot-emacs/tree/main][Lars Tveito]]
 - [[https://github.com/SophieBosio/.emacs.d/tree/main][Sophie Bosio]]  
 - [[https://panadestein.github.io/emacsd/][Ramón L. Panadés-Barrueta]]
@@ -340,7 +340,7 @@ I keep accidentally zooming when I'm scrolling through documents, so I unbind th
 ** Decluttering
 This should go into =early-init.el=, but as stated earlier, it no work with nix.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle early-init.el
 (dolist (mode
          '(tool-bar-mode                ; No toolbars, more room for text
            scroll-bar-mode              ; No scroll bars either
@@ -351,7 +351,7 @@ This should go into =early-init.el=, but as stated earlier, it no work with nix.
 I'm currently testing this to see if there really is a difference, this should
 also go into =early-init.el=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle early-init.el
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 (add-to-list 'default-frame-alist '(internal-border-width . 24))
 #+end_src
@@ -364,7 +364,7 @@ When I open Emacs, I want it to open maximised and fullscreen by default.
 #+end_src
 
 ** Styling Delimiters
-I like to have different colors depending on the level, [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] does that.
+I like to have different colors depending on the depth, [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] does that.
 
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
@@ -459,7 +459,6 @@ I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
 
 #+begin_src emacs-lisp
 (use-package doom-modeline
-  :ensure t
   :init (doom-modeline-mode 1)
   :config
   (setq doom-modeline-buffer-file-name-style 'file-name))
@@ -603,7 +602,7 @@ I do not like Emacs' undo until you redo behaviour. [[https://github.com/emacsmi
 
 * Buffers and Frames
 ** Killing Buffers
-Taken from this [[https://superuser.com/questions/895920/how-can-i-close-all-buffers-in-emacs][StackExchange]] post and Sophie Bosio. It seemed interessting. =C-c k= kills the current buffer, whilst =C-u C-c k= kills all external Emacs buffers.
+Taken from this [[https://superuser.com/questions/895920/how-can-i-close-all-buffers-in-emacs][StackExchange]] post and Sophie Bosio. It seemed interesting. =C-c k= kills the current buffer, whilst =C-u C-c k= kills all external Emacs buffers.
 
 #+begin_src emacs-lisp
 (defun soph/kill-buffer (&optional arg)
@@ -909,7 +908,7 @@ and automatically expand it into function templates. I use this over abbrevs.
   :hook (org-mode . jinx-mode)
   :bind ("C-." . jinx-correct)
   :config
-  (setq jinx-languages "en_US nb-NO"))
+  (setq jinx-languages "en_US nb_NO"))
 #+end_src
 
 *** Define word
@@ -1000,7 +999,6 @@ The following code is taken from Lars Tveito
   #+begin_src emacs-lisp
   (use-package org
     :ensure nil
-    :defer t
     :hook (org-mode . olivetti-mode)
     :bind (:map org-mode-map
                 ("C-c C-c" . org-export-to-pdf-and-open))
@@ -1042,6 +1040,7 @@ The following code is taken from Lars Tveito
 
    #+begin_src emacs-lisp
    (use-package org-appear
+     :after org
      :commands (org-appear-mode)
      :hook     (org-mode . org-appear-mode)
      :config 
@@ -1252,8 +1251,8 @@ The following code is taken from Lars Tveito
      :if (executable-find "direnv")
      :init
      (setq envrc-debug t)
-     (add-hook 'after-init-hook (lambda () (envrc-global-mode 1)))
-     (advice-add 'cider-jack-in :around #'envrc-propagate-environment))
+     :hook
+     (after-init . envrc-global-mode))
    #+end_src
 
 ** Evil Nerd Commenter
@@ -1314,9 +1313,6 @@ The following code is taken from Lars Tveito
    #+end_src
    
 ** Java
-   The lambda function makes it so that Java auto-formats on save, and that the
-   hook is a local hook.
-   
    #+begin_src emacs-lisp
    (use-package java-mode
      :ensure nil
