@@ -252,7 +252,7 @@ I get some compile warnings, this should hopefully remove them. They're usually 
 #+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent) ;; native-comp warning
 (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
-;; (setq warning-suppress-types '((lexical-binding)))
+(setq warning-suppress-types '((lexical-binding)))
 #+end_src
 
 Taken from Doom Emacs =core.el=
