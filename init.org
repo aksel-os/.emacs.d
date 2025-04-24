@@ -97,6 +97,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#eglot][Eglot]]
   - [[#python][Python]]
   - [[#java][Java]]
+  - [[#c][C]]
   - [[#nix][Nix]]
 - [[#activating-custom-keybindings][Activating Custom Keybindings]]
   - [[#keybind-overrides][Keybind Overrides]]
@@ -1291,11 +1292,16 @@ The following code is taken from Lars Tveito
      (add-to-list 'eglot-server-programs
                   '(python-mode . ("pyright"))
                   '(java-mode   . ("jdtls"))))
+                  ;; '(c-mode      . ("clang"))))
                   ;; '(nix-mode    . ("nil"))))
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
      (add-hook 'before-save-hook #'eglot-format-buffer nil t))
+
+   (defun local-compile-bind ()
+     "Adds a local keybind to compile"
+     (local-set-key (kbd "C-c C-c") 'compile))
    #+end_src
 
 ** Python
@@ -1316,18 +1322,35 @@ The following code is taken from Lars Tveito
    
 ** Java
    #+begin_src emacs-lisp
+   (defun compile-with-javac ()
+     "Set buffer local compile command for Java"
+     (local-compile-bind)
+     (setq-local compile-command
+                 (concat "javac " buffer-file-name)))
+
    (use-package java-mode
      :ensure nil
      :hook
      (java-mode . eglot-ensure)
      (java-mode . eglot-format-on-save)
-     (java-mode . (lambda ()
-                    (local-set-key (kbd "C-c C-c") 'compile)))
-     (java-mode . (lambda ()
-                    (setq-local compile-command
-                         (concat "javac " buffer-file-name)))))
+     (java-mode . compile-with-javac))
    #+end_src
    
+** C
+   #+begin_src emacs-lisp
+   (defun compile-with-gcc ()
+     "Set buffer local compile command for C"
+     (local-compile-bind)
+     (setq-local compile-command
+                 (concat "gcc -Wall -Wextra -Werror -pedantic " buffer-file-name)))
+
+   (use-package c-mode
+     :ensure nil
+     :hook
+     (c-mode . eglot-ensure)
+     (c-mode . eglot-format-on-save)
+     (c-mode . compile-with-gcc))
+   #+end_src
 ** Nix
    #+begin_src emacs-lisp
    (use-package nix-mode
