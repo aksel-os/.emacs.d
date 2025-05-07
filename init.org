@@ -1288,6 +1288,7 @@ The following code is taken from Lars Tveito
 
    #+begin_src emacs-lisp
    (use-package eglot
+     :ensure nil
      :defer t)
 
    (defun eglot-format-on-save ()
