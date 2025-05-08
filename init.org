@@ -780,7 +780,7 @@ I often press =C-x C-b= when I only mean to press =C-x b=.
 ** vterm
 [[https://github.com/akermu/emacs-libvterm][vterm]] is a fully-fledged terminal emulator inside GNU Emacs based on libvterm
 
-The following is taken from Lars Tveito, with some keybind tweaks.
+The following is taken from Lars Tveito, with some tweaks.
 
 #+begin_src emacs-lisp
 (use-package vterm
@@ -800,15 +800,15 @@ The following is taken from Lars Tveito, with some keybind tweaks.
 
   :bind (:map custom-bindings-map
               ("C-z" . toggle-vterm)
-              ("s-1" . (lambda () (interactive) (toggle-vterm 1)))
-              ("s-2" . (lambda () (interactive) (toggle-vterm 2)))
-              ("s-3" . (lambda () (interactive) (toggle-vterm 3)))
-              ("s-4" . (lambda () (interactive) (toggle-vterm 4)))
-              ("s-5" . (lambda () (interactive) (toggle-vterm 5)))
-              ("s-6" . (lambda () (interactive) (toggle-vterm 6)))
-              ("s-7" . (lambda () (interactive) (toggle-vterm 7)))
-              ("s-8" . (lambda () (interactive) (toggle-vterm 8)))
-              ("s-9" . (lambda () (interactive) (toggle-vterm 9))))
+              ("M-1" . (lambda () (interactive) (toggle-vterm 1)))
+              ("M-2" . (lambda () (interactive) (toggle-vterm 2)))
+              ("M-3" . (lambda () (interactive) (toggle-vterm 3)))
+              ("M-4" . (lambda () (interactive) (toggle-vterm 4)))
+              ("M-5" . (lambda () (interactive) (toggle-vterm 5)))
+              ("M-6" . (lambda () (interactive) (toggle-vterm 6)))
+              ("M-7" . (lambda () (interactive) (toggle-vterm 7)))
+              ("M-8" . (lambda () (interactive) (toggle-vterm 8)))
+              ("M-9" . (lambda () (interactive) (toggle-vterm 9))))
 
   :config
   ;; Don't query about killing vterm buffers, just kill it
@@ -972,7 +972,6 @@ The following code is taken from Lars Tveito
          (multiple-cursors-mode-disabled . (lambda () (corfu-mode 1))))
   :bind (:map custom-bindings-map
               ("C-c e" . mc/edit-lines)
-              ("C-c a" . mc/mark-all-like-this)
               ("C-c n" . mc/mark-next-like-this)))
 #+end_src
 
