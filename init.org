@@ -1375,7 +1375,7 @@ The following code is taken from Lars Tveito
      (nix-mode . eglot-ensure)
      (nix-mode . eglot-format-on-save)
      :config
-     (add-to-list 'eglot-server-programs '(nix-mode    . ("nil"))))
+     (add-to-list 'eglot-server-programs '(nix-mode    . ("'nil'"))))
 
    (use-package nix-drv-mode
      :ensure nix-mode
