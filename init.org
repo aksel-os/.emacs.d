@@ -1383,10 +1383,10 @@ The following code is taken from Lars Tveito
      :config
      (add-to-list 'eglot-server-programs '(nix-mode . ("nil"
                                                        :initializationOptions
-                                                       :nil
-                                                       :formatting
-                                                       :command ["alejandra"]
-                                                       ))))
+                                                       ((:nil
+                                                         (:formatting
+                                                          (:command ["alejandra"]
+                                                                    ))))))))
 
    (use-package nix-drv-mode
      :ensure nix-mode
