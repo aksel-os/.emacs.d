@@ -1376,7 +1376,6 @@ The following code is taken from Lars Tveito
    #+begin_src emacs-lisp
    (use-package nix-mode
      :mode ("\\.nix\\'" "\\.nix.in\\'")
-     :after eglot
      :hook
      (nix-mode . eglot-ensure)
      (nix-mode . eglot-format-on-save)
