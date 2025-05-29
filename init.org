@@ -95,6 +95,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#evil-nerd-commenter][Evil Nerd Commenter]]
   - [[#flycheck][Flycheck]]
   - [[#eglot][Eglot]]
+  - [[#just][Just]]
   - [[#python][Python]]
   - [[#java][Java]]
   - [[#c][C]]
@@ -1299,6 +1300,10 @@ The following code is taken from Lars Tveito
      (local-set-key (kbd "C-c C-c") 'compile))
    #+end_src
 
+** Just
+   #+begin_src emacs-lisp
+   (use-package just-mode)
+   #+end_src
 ** Python
    [[https://codeberg.org/ideasman42/emacs-py-autopep8][py-autopep8]] provides commands, which use the external autopep8 tool to tidy up the current buffer according to Python's PEP8.
    #+begin_src emacs-lisp
@@ -1375,7 +1380,12 @@ The following code is taken from Lars Tveito
      (nix-mode . eglot-ensure)
      (nix-mode . eglot-format-on-save)
      :config
-     (add-to-list 'eglot-server-programs '(nix-mode    . ("'nil'"))))
+     (add-to-list 'eglot-server-programs '(nix-mode . ("nil"
+                                                       :initializationOptions
+                                                       :nil
+                                                       :formatting
+                                                       :command "alejandra"
+                                                       ))))
 
    (use-package nix-drv-mode
      :ensure nix-mode
