@@ -1380,12 +1380,10 @@ The following code is taken from Lars Tveito
      (nix-mode . eglot-ensure)
      (nix-mode . eglot-format-on-save)
      :config
-     (add-to-list 'eglot-server-programs '(nix-mode . ("nil"
-                                                       :initializationOptions
-                                                       ((:nil
-                                                         (:formatting
-                                                          (:command ["alejandra"]
-                                                                    ))))))))
+     (add-to-list 'eglot-server-programs '(nix-mode . ("nil" :initializationOptions
+                                                       (:formatting
+                                                        (:command ["alejandra"]
+                                                                  ))))))
 
    (use-package nix-drv-mode
      :ensure nix-mode
