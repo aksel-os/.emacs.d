@@ -1288,8 +1288,7 @@ The following code is taken from Lars Tveito
 
    #+begin_src emacs-lisp
    (use-package eglot
-     :ensure nil
-     :defer t)
+     :ensure nil)
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
@@ -1337,7 +1336,7 @@ The following code is taken from Lars Tveito
      (java-mode . eglot-format-on-save)
      (java-mode . akselos/compile-with-javac)
      :config
-     (add-to-list 'eglot-server-programs '(java-mode   . ("jdtls"))))
+     (add-to-list 'eglot-server-programs '(java-mode . ("jdtls"))))
    #+end_src
    
 ** C
@@ -1355,7 +1354,7 @@ The following code is taken from Lars Tveito
      (c-mode . eglot-format-on-save)
      (c-mode . akselos/compile-with-gcc)
      :config
-     ;; (add-to-list 'eglot-server-programs '(c-mode   . ("clang")))
+     ;; (add-to-list 'eglot-server-programs '(c-mode . ("clang")))
      )
 
    #+end_src
@@ -1369,7 +1368,7 @@ The following code is taken from Lars Tveito
      (html-mode . eglot-format-on-save)
      :config
      (add-to-list 'eglot-server-programs
-                  '(html-mode   . ("vscode-langservers-extracted"))))
+                  '(html-mode . ("vscode-langservers-extracted"))))
    #+end_src
    
 ** Nix
