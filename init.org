@@ -1378,6 +1378,9 @@ The following code is taken from Lars Tveito
    #+begin_src emacs-lisp
    (use-package geiser
      :config (setq geiser-active-implementations '(racket)))
+
+   (use-package geiser-racket
+     :requires geiser)
    #+end_src
 
 ** Nix
