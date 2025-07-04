@@ -100,6 +100,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#java][Java]]
   - [[#c][C]]
   - [[#html][HTML]]
+  - [[#scheme][Scheme]]
   - [[#nix][Nix]]
 - [[#activating-custom-keybindings][Activating Custom Keybindings]]
   - [[#keybind-overrides][Keybind Overrides]]
@@ -1371,6 +1372,14 @@ The following code is taken from Lars Tveito
                   '(html-mode . ("vscode-langservers-extracted"))))
    #+end_src
    
+** Scheme
+   [[https://github.com/emacsmirror/geiser][Geiser]] gives you amongst other things a Scheme REPL in emacs.
+
+   #+begin_src emacs-lisp
+   (use-package geiser
+     :config (setq geiser-active-implementations '(racket)))
+   #+end_src
+
 ** Nix
    #+begin_src emacs-lisp
    (use-package nix-mode
