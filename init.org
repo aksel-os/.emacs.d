@@ -1393,7 +1393,7 @@ The following code is taken from Lars Tveito
      :config
      (add-to-list 'eglot-server-programs '(nix-mode . ("nil" :initializationOptions
                                                        (:formatting
-                                                        (:command ["alejandra"]
+                                                        (:command ["nixfmt"]
                                                                   ))))))
 
    (use-package nix-drv-mode
