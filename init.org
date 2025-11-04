@@ -1385,13 +1385,15 @@ The following code is taken from Lars Tveito
    #+end_src
 
 ** PostgreSQL
-   #+begin_src emacs-lisp :tangle no
-   (use-package sql-mode
-     :ensure nil
+   #+begin_src emacs-lisp
+   (use-package sqlformat
+     :hook
+     (sql-mode . sqlformat-on-save-mode)
      :config
-     (sql-set-product 'postgres)
-     )
+     (setq sqlformat-command 'pgformatter)
+     (setq sql-set-dialect 'postgres))
    #+end_src
+
 ** Nix
    #+begin_src emacs-lisp
    (use-package nix-mode
@@ -1400,10 +1402,10 @@ The following code is taken from Lars Tveito
      (nix-mode . eglot-ensure)
      (nix-mode . eglot-format-on-save)
      :config
-     (add-to-list 'eglot-server-programs '(nix-mode . ("nil" :initializationOptions
-                                                       (:formatting
-                                                        (:command ["nixfmt"]
-                                                                  ))))))
+     (add-to-list 'eglot-server-programs
+                  '(nix-mode . ("nil" :initializationOptions
+                                (:formatting
+                                 (:command ["nixfmt"]))))))
 
    (use-package nix-drv-mode
      :ensure nix-mode
