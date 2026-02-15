@@ -411,8 +411,6 @@ This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-c
 
 #+begin_src emacs-lisp
 (use-package auto-dark
-  :init
-  (auto-dark-mode t)
   :hook
   (auto-dark-dark-mode
    . (lambda ()
@@ -424,6 +422,7 @@ This code snippet is taken from [[https://www.rahuljuliato.com/posts/auto-dark-c
        (setq catppuccin-flavor 'latte)
        (catppuccin-reload)))
   :config
+  (auto-dark-mode t)
   (setq auto-dark-allow-osascript t)
   
   (setq custom-safe-themes t) ; Stop asking me damnit
@@ -473,8 +472,8 @@ I use the [[https://github.com/seagle0128/doom-modeline][doom modeline]].
 
 #+begin_src emacs-lisp
 (use-package doom-modeline
-  :init (doom-modeline-mode 1)
   :config
+  (doom-modeline-mode 1)
   (setq doom-modeline-buffer-file-name-style 'file-name))
 #+end_src
 
@@ -745,16 +744,20 @@ I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wi
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode))
   :init
-  (corfu-popupinfo-mode)
-  (corfu-echo-mode)
   (global-set-key (kbd "C-<tab>") 'completion-at-point)
   :config
+  (corfu-echo-mode)
   (keymap-unset corfu-map "RET")
   :custom
   (corfu-auto nil)
   (corfu-auto-prefix 2)
   (corfu-auto-delay 0.25)
   (corfu-cycle t))
+
+(use-package corfu-popupinfo
+  :ensure nil
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode))
 #+end_src
 
 ** Dabbrev
@@ -791,7 +794,7 @@ I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
 
 #+begin_src emacs-lisp
 (use-package marginalia
-  :init 
+  :config 
   (marginalia-mode 1))
 #+end_src
 
@@ -1309,9 +1312,8 @@ The following code is taken from Lars Tveito
    #+begin_src emacs-lisp
    (use-package flycheck
     :defer t
-    :init
-    (global-flycheck-mode 1)
     :config
+    (global-flycheck-mode 1)
     (setq flycheck-display-errors-function #'ignore))
    #+end_src
 
@@ -1325,7 +1327,11 @@ The following code is taken from Lars Tveito
      :ensure nil
      :init
      (setq completion-category-overrides '((eglot (styles orderless))
-                                      (eglot-capf (styles orderless))))
+                                           (eglot-capf (styles orderless))))
+     :config
+     (setq eglot-sync-connect 1)
+     (add-to-list 'eglot-ignored-server-capabilities
+                  :workspace/didChangeWatchedFiles)
      )
 
    (defun eglot-format-on-save ()
@@ -1350,13 +1356,21 @@ The following code is taken from Lars Tveito
    #+end_src
    
    #+begin_src emacs-lisp
-   (use-package python-mode
-     :ensure nil
-     :hook
-     (python-mode . eglot-ensure)
-     (python-mode . py-autopep8-mode)
-     :config
-     (add-to-list 'eglot-server-programs '(python-mode . ("pyright"))))
+    (use-package python-mode
+      :ensure nil
+      :hook
+      (python-mode . py-autopep8-mode)
+      (python-ts-mode . py-autopep8-mode))
+
+    (with-eval-after-load 'eglot
+      (add-to-list 'eglot-server-programs
+                '((python-mode python-ts-mode)
+                  . ("pyright-langserver" "--stdio"
+                     :initializationOptions
+                     (:watchForSourceChanges :json-false
+                      :watchForConfigChanges :json-false
+                      :watchForLibraryChanges :json-false)))))
+
    #+end_src
    
 ** Java
