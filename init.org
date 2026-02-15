@@ -96,8 +96,6 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#evil-nerd-commenter][Evil Nerd Commenter]]
   - [[#flycheck][Flycheck]]
   - [[#eglot][Eglot]]
-  - [[#eldoc][Eldoc]]
-  - [[#eldoc-box][Eldoc Box]]
   - [[#just][Just]]
   - [[#python][Python]]
   - [[#java][Java]]
@@ -1342,46 +1340,6 @@ The following code is taken from Lars Tveito
    (defun akselos/local-compile-bind ()
      "Adds a local keybind to compile"
      (local-set-key (kbd "C-c C-c") 'compile))
-   #+end_src
-
-** Eldoc
-   #+begin_src emacs-lisp
-   (use-package eldoc
-     :ensure nil
-     :hook (prog-mode . eldoc-mode)
-     :config
-     (setq eldoc-echo-area-use-multiline-p t))
-     #+end_src
-** Eldoc Box
-   #+begin_src emacs-lisp
-   (use-package eldoc-box
-     :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode)
-     :config
-     (setq eldoc-box-hover-render-function #'identity)
-     (setq eldoc-box-max-width 80
-           eldoc-box-max-height 30))
-
-   (with-eval-after-load 'eldoc-box
-     (setq eldoc-box-frame-parameters
-           '((internal-border-width . 4)
-             (left-fringe . 0)
-             (right-fringe . 0)
-             (undecorated . t)
-             (child-frame-border-width . 1)
-             (no-accept-focus . t)
-             (min-width . 0)
-             (min-height . 0)
-             (minibuffer . nil)
-             (cursor-type . nil))))
-
-     ;; Doommodeline fuckery
-     (with-eval-after-load 'eldoc-box
-       (add-hook 'eldoc-box-hover-at-point-mode-hook
-                 (lambda ()
-                   (if eldoc-box-hover-at-point-mode
-                       (setq-local eldoc-message-function #'eldoc-box--eldoc-message)
-                     (kill-local-variable 'eldoc-message-function)))))
-
    #+end_src
 
 ** Just
