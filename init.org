@@ -64,6 +64,8 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#vertico-posframe][Vertico Posframe]]
   - [[#orderless][Orderless]]
   - [[#corfu][Corfu]]
+  - [[#corfu-candidate-overlay][Corfu Candidate Overlay]]
+  - [[#dabbrev][Dabbrev]]
   - [[#cape][Cape]]
 - [[#search][Search]]
   - [[#marginalia][Marginalia]]
@@ -732,7 +734,8 @@ I temporarily disable vertico-posframe-mode when searching with consult. When se
   :config
   (setq completion-styles '(orderless basic partial-completion)
         completion-category-overrides '((file (styles basic partial-completion)))
-        orderless-component-separator "[ |]"))
+        orderless-component-separator "[ |]"
+        completion-pcm-leading-wildcard t))
 #+end_src
 
 ** Corfu
@@ -740,14 +743,44 @@ I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wi
 
 #+begin_src emacs-lisp
 (use-package corfu
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode))
   :init
-  (global-corfu-mode 1)
-  (corfu-popupinfo-mode 1)
+  (corfu-popupinfo-mode)
+  (corfu-echo-mode)
+  :config
+  (keymap-unset corfu-map "RET")
   :custom
-  ;; (corfu-auto t)
-  (corfu-auto-delay 0.5)
+  (corfu-auto nil)
   (corfu-cycle t))
 #+end_src
+
+** Corfu Candidate Overlay
+Show first candidate in an inline overlay while typing. When there is only
+one candidate the overlay text will be underlined.
+
+#+begin_src emacs-lisp
+(use-package corfu-candidate-overlay
+  :after corfu
+  :init
+  (global-set-key (kbd "C-<tab>") 'completion-at-point)
+  (corfu-candidate-overlay-mode))
+#+end_src
+
+** Dabbrev
+   #+begin_src emacs-lisp
+;; Use Dabbrev with Corfu!
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+   #+end_src
 
 ** Cape
 I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
@@ -1298,7 +1331,11 @@ The following code is taken from Lars Tveito
 
    #+begin_src emacs-lisp
    (use-package eglot
-     :ensure nil)
+     :ensure nil
+     :init
+     (setq completion-category-overrides '((eglot (styles orderless))
+                                      (eglot-capf (styles orderless))))
+     )
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
