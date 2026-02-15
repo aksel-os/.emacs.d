@@ -285,6 +285,13 @@ Set UTF-8 as preferred coding system.
 (set-selection-coding-system 'utf-8)
 #+end_src
 
+This allows me to specify things such as lsp paths in =.dir-locals.el= on remote
+servers, such that Eglot works there aswell.
+
+#+begin_src emacs-lisp
+(setq enable-remote-dir-locals t)
+#+end_src
+
 ** Packages
 I don't really have any loyalties to specific emacs package managers, and use-package is included in base Emacs.
 #+begin_src emacs-lisp
