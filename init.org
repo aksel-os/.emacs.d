@@ -66,6 +66,7 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#corfu][Corfu]]
   - [[#dabbrev][Dabbrev]]
   - [[#cape][Cape]]
+  - [[#eldoc-box][Eldoc Box]]
 - [[#search][Search]]
   - [[#marginalia][Marginalia]]
   - [[#consult][Consult]]
@@ -746,7 +747,6 @@ I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wi
   :init
   (global-set-key (kbd "C-<tab>") 'completion-at-point)
   :config
-  (corfu-echo-mode)
   (keymap-unset corfu-map "RET")
   :custom
   (corfu-auto nil)
@@ -757,7 +757,12 @@ I use [[https://github.com/minad/corfu][corfu]] for =completion-in-region=. I wi
 (use-package corfu-popupinfo
   :ensure nil
   :after corfu
-  :hook (corfu-mode . corfu-popupinfo-mode))
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom
+  (corfu-popupinfo-delay 0)
+  (custom-set-faces
+   '(corfu-popupinfo ((t (:inherit default))))
+   '(corfu-popupinfo-buffer ((t (:inherit default))))))
 #+end_src
 
 ** Dabbrev
@@ -787,6 +792,12 @@ I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
   (add-hook 'completion-at-point-functions #'cape-elisp-block)  
   (add-hook 'completion-at-point-functions #'cape-keyword))
 #+end_src
+
+** Eldoc Box
+   #+begin_src emacs-lisp
+(use-package eldoc-box
+  :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode))
+   #+end_src
 
 * Search
 ** Marginalia
