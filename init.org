@@ -1379,7 +1379,13 @@ The following code is taken from Lars Tveito
    
 ** Kotlin
    #+begin_src emacs-lisp
-   (use-package kotlin-mode)
+      (use-package kotlin-mode
+        :hook
+        (kotlin-mode . eglot-ensure)
+        (kotlin-mode . eglot-format-on-save)
+        :config
+        (add-to-list 'eglot-server-programs
+                     '(kotlin-mode . ("kotlin-language-server"))))
    #+end_src
 ** C
    #+begin_src emacs-lisp
