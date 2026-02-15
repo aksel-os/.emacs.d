@@ -66,7 +66,6 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#corfu][Corfu]]
   - [[#dabbrev][Dabbrev]]
   - [[#cape][Cape]]
-  - [[#eldoc-box][Eldoc Box]]
 - [[#search][Search]]
   - [[#marginalia][Marginalia]]
   - [[#consult][Consult]]
@@ -97,6 +96,8 @@ I mainly run this with my nix dotfiles, you can view those [[https://github.com/
   - [[#evil-nerd-commenter][Evil Nerd Commenter]]
   - [[#flycheck][Flycheck]]
   - [[#eglot][Eglot]]
+  - [[#eldoc][Eldoc]]
+  - [[#eldoc-box][Eldoc Box]]
   - [[#just][Just]]
   - [[#python][Python]]
   - [[#java][Java]]
@@ -361,7 +362,7 @@ This should go into =early-init.el=, but as stated earlier, it no work with nix.
            scroll-bar-mode              ; No scroll bars either
            blink-cursor-mode))          ; The blinking cursor gets old
   (funcall mode 0))
-#+end_src
+  #+end_src
 
 I'm currently testing this to see if there really is a difference, this should
 also go into =early-init.el=.
@@ -792,12 +793,6 @@ I use [[https://github.com/minad/cape][cape]] to help =corfu-auto=.
   (add-hook 'completion-at-point-functions #'cape-elisp-block)  
   (add-hook 'completion-at-point-functions #'cape-keyword))
 #+end_src
-
-** Eldoc Box
-   #+begin_src emacs-lisp
-(use-package eldoc-box
-  :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode))
-   #+end_src
 
 * Search
 ** Marginalia
@@ -1349,6 +1344,46 @@ The following code is taken from Lars Tveito
      (local-set-key (kbd "C-c C-c") 'compile))
    #+end_src
 
+** Eldoc
+   #+begin_src emacs-lisp
+   (use-package eldoc
+     :ensure nil
+     :hook (prog-mode . eldoc-mode)
+     :config
+     (setq eldoc-echo-area-use-multiline-p t))
+     #+end_src
+** Eldoc Box
+   #+begin_src emacs-lisp
+   (use-package eldoc-box
+     :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+     :config
+     (setq eldoc-box-hover-render-function #'identity)
+     (setq eldoc-box-max-width 80
+           eldoc-box-max-height 30))
+
+   (with-eval-after-load 'eldoc-box
+     (setq eldoc-box-frame-parameters
+           '((internal-border-width . 4)
+             (left-fringe . 0)
+             (right-fringe . 0)
+             (undecorated . t)
+             (child-frame-border-width . 1)
+             (no-accept-focus . t)
+             (min-width . 0)
+             (min-height . 0)
+             (minibuffer . nil)
+             (cursor-type . nil))))
+
+     ;; Doommodeline fuckery
+     (with-eval-after-load 'eldoc-box
+       (add-hook 'eldoc-box-hover-at-point-mode-hook
+                 (lambda ()
+                   (if eldoc-box-hover-at-point-mode
+                       (setq-local eldoc-message-function #'eldoc-box--eldoc-message)
+                     (kill-local-variable 'eldoc-message-function)))))
+
+   #+end_src
+
 ** Just
    #+begin_src emacs-lisp
    (use-package just-mode)
@@ -1362,26 +1397,17 @@ The following code is taken from Lars Tveito
    #+end_src
    
    #+begin_src emacs-lisp
-   (add-hook 'envrc-after-update-hook
-          (lambda ()
-            (when (and (derived-mode-p 'python-mode 'python-ts-mode)
-                       (not (eglot-current-server)))
-              (eglot-ensure))))
-
    (use-package python-mode
      :ensure nil
      :hook
      (python-mode . py-autopep8-mode)
      (python-ts-mode . py-autopep8-mode)
+     (python-mode . eglot-ensure)
+     (python-ts-mode . eglot-ensure)
      :config
      (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
-                 . ("basedpyright-langserver" "--stdio"
-                    :initializationOptions
-                    (:analysis
-                     (:autoSearchPaths :json-false
-                      :useLibraryCodeForTypes :json-false))))))
-
+                 . ("basedpyright-langserver" "--stdio"))))
    #+end_src
    
 ** Java
