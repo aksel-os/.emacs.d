@@ -1351,17 +1351,25 @@ The following code is taken from Lars Tveito
    #+end_src
    
    #+begin_src emacs-lisp
+   (add-hook 'envrc-after-update-hook
+          (lambda ()
+            (when (and (derived-mode-p 'python-mode 'python-ts-mode)
+                       (not (eglot-current-server)))
+              (eglot-ensure))))
+
    (use-package python-mode
      :ensure nil
      :hook
      (python-mode . py-autopep8-mode)
      (python-ts-mode . py-autopep8-mode)
-     (python-mode . eglot-ensure)
-     (python-ts-mode . eglot-ensure)
      :config
      (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
-                 . ("basedpyright-langserver" "--stdio"))))
+                 . ("basedpyright-langserver" "--stdio"
+                    :initializationOptions
+                    (:analysis
+                     (:autoSearchPaths :json-false
+                      :useLibraryCodeForTypes :json-false))))))
 
    #+end_src
    
