@@ -1327,12 +1327,7 @@ The following code is taken from Lars Tveito
      :ensure nil
      :init
      (setq completion-category-overrides '((eglot (styles orderless))
-                                           (eglot-capf (styles orderless))))
-     :config
-     (setq eglot-sync-connect 1)
-     (add-to-list 'eglot-ignored-server-capabilities
-                  :workspace/didChangeWatchedFiles)
-     )
+                                           (eglot-capf (styles orderless)))))
 
    (defun eglot-format-on-save ()
      "Formats the buffer before save"
@@ -1356,20 +1351,17 @@ The following code is taken from Lars Tveito
    #+end_src
    
    #+begin_src emacs-lisp
-    (use-package python-mode
-      :ensure nil
-      :hook
-      (python-mode . py-autopep8-mode)
-      (python-ts-mode . py-autopep8-mode))
-
-    (with-eval-after-load 'eglot
-      (add-to-list 'eglot-server-programs
-                '((python-mode python-ts-mode)
-                  . ("pyright-langserver" "--stdio"
-                     :initializationOptions
-                     (:watchForSourceChanges :json-false
-                      :watchForConfigChanges :json-false
-                      :watchForLibraryChanges :json-false)))))
+   (use-package python-mode
+     :ensure nil
+     :hook
+     (python-mode . py-autopep8-mode)
+     (python-ts-mode . py-autopep8-mode)
+     (python-mode . eglot-ensure)
+     (python-ts-mode . eglot-ensure)
+     :config
+     (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 . ("basedpyright-langserver" "--stdio"))))
 
    #+end_src
    
